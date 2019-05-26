@@ -1,0 +1,62 @@
+<div class="row">
+    <div class="col-12">
+        <h3>Bill Details</h3>
+    </div>
+    <div class="col-md-12 uploadTag">
+        Upload File:
+        <mat-icon (click)="file.click()" style="cursor: pointer;">insert_drive_file</mat-icon>
+        <input #file (change)=fileEvent($event) multiple style="display: none;" type="file"/>
+    </div>
+    <div class="col-12 tableTag">
+        <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
+            <ng-container matColumnDef="position">
+                <th *matHeaderCellDef mat-header-cell> Bill Type</th>
+                <td *matCellDef="let element" mat-cell>
+                    <mat-form-field>
+                        <input [value]="element.position" matInput>
+                    </mat-form-field>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+                <th *matHeaderCellDef mat-header-cell> Bill No</th>
+                <td *matCellDef="let element" mat-cell>
+                    <mat-form-field>
+                        <input [value]="element.name" matInput>
+                    </mat-form-field>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="weight">
+                <th *matHeaderCellDef mat-header-cell> Bill Date</th>
+                <td *matCellDef="let element" mat-cell>
+                    <mat-form-field>
+                        <input [value]="element.weight" matInput>
+                    </mat-form-field>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="date">
+                <th *matHeaderCellDef mat-header-cell> Bill Upload Date</th>
+                <td *matCellDef="let element" mat-cell>
+                    <mat-form-field>
+                        <input [matDatepicker]="picker" [value]="element.date" matInput placeholder="Choose a date">
+                        <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="action">
+                <th *matHeaderCellDef mat-header-cell> Action</th>
+                <td *matCellDef="let element" mat-cell> {{element.symbol}} </td>
+            </ng-container>
+
+            <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+        </table>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-12">
+        <button class="pull-right" color="primary" mat-raised-button>Save</button>
+    </div>
+</div>
+

@@ -1,0 +1,126 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport="true"
+                 [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+                 [mode]="(isHandset$ | async) ? 'over' : 'side'"
+                 [opened]="!(isHandset$ | async)">
+        <mat-toolbar>
+            <img src="assets/img/logo1.png">
+            <span class="orgName">{{this.commonService.loggedOrgName}}</span>
+        </mat-toolbar>
+        <mat-nav-list>
+            <a class="mainMenuItem" mat-raised-button routerLinkActive="active" [routerLink]="['/dashboard']"
+               [routerLinkActiveOptions]="{exact: true}" (click)="commonService.mainComponent = 'dashboard'" routerLinkActive="active">Dashboard</a>
+            <mat-expansion-panel class="hidden-xs" (opened)="openGroup('master')">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Master
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-list role="list">
+                    <mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active" [routerLink]="['/master', 'company']">Company</mat-list-item>
+                </mat-list>
+                <mat-list role="list">
+                    <mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active" [routerLink]="['/master', 'vessel']">Vessel</mat-list-item>
+                </mat-list>
+                <mat-list role="list">
+                    <mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active"
+                                   [routerLink]="['/master', 'port', 'master']">Port
+                    </mat-list-item>
+                </mat-list>
+                <mat-list role="list">
+                    <mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active"
+                                   [routerLink]="['/master', 'lookup']">Lookup
+                    </mat-list-item>
+                </mat-list>
+                <mat-list role="list">
+                    <mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active" [routerLink]="['/master', 'country']">Country</mat-list-item>
+                </mat-list>
+                <!--<mat-list role="list">-->
+                    <!--<mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active" [routerLink]="['/master', 'commodity']">Commodity</mat-list-item>-->
+                <!--</mat-list>-->
+                <mat-list role="list">
+                    <mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active" [routerLink]="['/master', 'vendor']">Vendor</mat-list-item>
+                </mat-list>
+
+                <mat-list role="list">
+                    <mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active" [routerLink]="['/master', 'customer']">Customer</mat-list-item>
+                </mat-list>
+                <mat-list role="list">
+                    <mat-list-item class="subMenuItem" role="listitem" routerLinkActive="active" [routerLink]="['/master', 'service']">Service</mat-list-item>
+                </mat-list>
+            </mat-expansion-panel>
+            <mat-expansion-panel (opened)="openGroup('master')" class="hidden-xs">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        PDA
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-list role="list">
+                    <mat-list-item [routerLink]="['/pda', 'list']" class="subMenuItem" role="listitem"
+                                   routerLinkActive="active">Create PDA
+                    </mat-list-item>
+                    <mat-list-item [routerLink]="['/pda', 'service-pda']" class="subMenuItem" role="listitem"
+                                   routerLinkActive="active">Service PDA
+                    </mat-list-item>
+
+                </mat-list>
+            </mat-expansion-panel>
+            <mat-expansion-panel (opened)="openGroup('master')" class="hidden-xs">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Finance
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-list role="list">
+                    <mat-list-item [routerLink]="['/finance', 'inflow']" class="subMenuItem" role="listitem"
+                                   routerLinkActive="active">Inflow
+                    </mat-list-item>
+                    <mat-list-item [routerLink]="['/finance', 'fund-allocation']" class="subMenuItem" role="listitem"
+                                   routerLinkActive="active">Fund Allocation
+                    </mat-list-item>
+                    <mat-list-item [routerLink]="['/finance', 'branch-requisition']" class="subMenuItem" role="listitem"
+                                   routerLinkActive="active">Branch Requisition
+                    </mat-list-item>
+                </mat-list>
+            </mat-expansion-panel>
+        </mat-nav-list>
+
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <!--color="primary"-->
+        <mat-toolbar>
+            <button
+                    type="button"
+                    aria-label="Toggle sidenav"
+                    mat-icon-button
+                    (click)="drawer.toggle()"
+                    *ngIf="isHandset$ | async">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <span>Port Agency Management</span>
+            <!--<span *ngIf="this.commonService.subComponent !== ''"> &nbsp;{{ ' / ' + this.commonService.subComponent | titlecase}}</span>-->
+            <!--<span *ngIf="this.commonService.nestedSubComponent !== ''"> &nbsp;{{ ' / ' + this.commonService.nestedSubComponent | titlecase}}</span>-->
+            <span class="spacer"></span>
+
+            <!--Notification-->
+            <!--<button mat-button [matMenuTriggerFor]="notification"><mat-icon matBadge="15" matBadgeColor="warn">notifications</mat-icon></button>
+            <mat-menu #notification="matMenu">
+                <button mat-menu-item>Item 1</button>
+                <button mat-menu-item>Item 2</button>
+            </mat-menu>-->
+
+            <!--Logout Section-->
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>person</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="logout()">
+                    <mat-icon>cancel</mat-icon>
+                    <span>Logout</span>
+                </button>
+            </mat-menu>
+        </mat-toolbar>
+        <ng-content></ng-content>
+        <!-- Add Content Here -->
+    </mat-sidenav-content>
+</mat-sidenav-container>

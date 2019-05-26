@@ -1,0 +1,132 @@
+<mat-card>
+    <div id="header-wrapper">
+        <button (click)="back()" *ngIf="!addForm"
+                class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <h3 [ngClass]="!addForm ? 'marginLeft' : ''" id="header-title">Services Details</h3>
+        <div *ngIf="addForm">
+            <div class="addBtn">
+                <button (click)="add()" class="ng-theme" mat-mini-fab>
+                    <mat-icon matTooltip="Add">add</mat-icon>
+                </button>
+            </div>
+            <div>
+                <mat-form-field id="search-box">
+                    <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card-content *ngIf='addForm'>
+        <div class="mat-elevation-z8">
+            <table [dataSource]="dataSource" mat-table matSort>
+
+                <ng-container matColumnDef="description">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
+                    <td *matCellDef="let row" mat-cell> {{row.description}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="code">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Code</th>
+                    <td *matCellDef="let row" mat-cell> {{row.code}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Status</th>
+                    <td *matCellDef="let row" [ngClass]="row.status.toUpperCase() === 'ACTIVE' ? 'active' : 'inactive'"
+                        mat-cell> {{row.status | uppercase}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="button">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>More details</th>
+                    <td *matCellDef="let row" mat-cell>
+                        <button (click)="addTax(row.description, row.id)" color="primary" mat-button>Tax detail</button>
+                    </td>
+                </ng-container>
+
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Action</th>
+                    <td *matCellDef="let row" class="action-column" mat-cell>
+                        <button (click)="update(row.id)" class="round-back edit-button" mat-button>
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button (click)="view(row.id)" class="round-back view-button" mat-button>
+                            <mat-icon>pageview</mat-icon>
+                        </button>
+                        <button (click)="delete(row.id)" class="round-back delete-button" mat-button>
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumns;" mat-row>
+                </tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[10, 20, 30]"></mat-paginator>
+        </div>
+    </mat-card-content>
+
+    <form (ngSubmit)="edit(form.value)" *ngIf="!addForm" [formGroup]="form">
+        <mat-card-content>
+            <div class="example-container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="services.disableText" formControlName="description" matInput
+                                   placeholder="Name" maxlength="50" autocomplete="off" required>
+                            <mat-error *ngIf="form.get('description').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="services.disableText" autocomplete="off" formControlName="code" matInput
+                                   placeholder="Code" maxlength="6" required>
+                            <mat-error *ngIf="form.get('code').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <mat-select [disabled]="services.disableText" formControlName="chargeCategory"
+                                        placeholder="Charge category" autocomplete="off"
+                                        required>
+                                <mat-option *ngFor="let p of this.arrDataLookup.CHARGE_CATEGORY" [value] = 'p.code'>{{p.value}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('chargeCategory').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <mat-select [disabled]="services.disableText" autocomplete="off" formControlName="status"
+                                        placeholder="Status"
+                                        required>
+                                <mat-option value="active">ACTIVE</mat-option>
+                                <mat-option value="inactive">INACTIVE</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('status').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+        <div align="end" class="example-button-row">
+            <button *ngIf="!services.disableText" [disabled]="!form.valid" color="primary"
+                    mat-raised-button>{{btnSubmit}}</button>
+        </div>
+    </form>
+</mat-card>
+
+

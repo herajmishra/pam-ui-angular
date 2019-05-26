@@ -1,0 +1,16 @@
+<h3 md-dialog-title class="primary-color" *ngIf="action==='email'">Email</h3>
+<h3 md-dialog-title class="primary-color" *ngIf="action==='print'">Print</h3>
+
+<mat-dialog-content>
+  <div *ngFor="let field of fields">
+    <div mat-card class="row">
+      <div><label style="font-size: 18px;width: 340px">{{field}}</label></div>
+      <mat-icon (click)="removeField($event,field)">close</mat-icon>
+    </div>
+  </div>
+</mat-dialog-content>
+<div mat-dialog-actions align="end" class="example-button-row">
+  <button type="button" color="primary" mat-raised-button *ngIf="action==='email'" (click)="sendEmail()">Email</button>
+  <button type="button" color="primary" mat-raised-button *ngIf="action==='print'" (click)="print()">Print</button>
+  <button mat-button color="primary" [mat-dialog-close]="true">close</button>
+</div>

@@ -1,0 +1,357 @@
+<mat-card>
+    <mat-horizontal-stepper [linear]="isLinear" #stepper class="pilotRestriction">
+        <mat-step [stepControl]="portService.form">
+            <form [formGroup]="portService.form" (ngSubmit)="savePort(portService.form.value)">
+
+                <ng-template matStepLabel>
+                    <button (click)="back()" class="ng-theme stepperLeft" mat-mini-fab>
+                        <mat-icon matTooltip="Back">arrow_back</mat-icon>
+                    </button>
+                </ng-template>
+                <h3 class="berthTitle">Port details</h3>
+                <mat-card-content>
+                    <div class="example-container">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <mat-form-field>
+                                    <input matInput placeholder="Name" autocomplete="off"
+                                           formControlName="description" required
+                                           [readonly]="portService.disableText">
+                                    <mat-error *ngIf="portService.form.get('description').errors?.required">
+                                        {{this.commonService.required}} <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-3">
+                                <mat-form-field>
+                                    <input matInput placeholder="Code" autocomplete="off"
+                                           formControlName="isoPortCode" required [readonly]="portService.disableText">
+                                    <mat-error *ngIf="portService.form.get('isoPortCode').errors?.required">
+                                        {{this.commonService.required}} <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-3">
+                                <mat-form-field>
+                                    <input matInput placeholder="State" autocomplete="off"
+                                           formControlName="state" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-3">
+                                <mat-form-field>
+                                    <input matInput placeholder="Postal code" autocomplete="off"
+                                           formControlName="postalCode" [readonly]="portService.disableText">
+                                    <mat-error *ngIf="portService.form.get('postalCode').errors?.required">
+                                        {{this.commonService.required}} <strong>required</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="!portService.form.get('postalCode').errors?.required && portService.form.get('postalCode').errors?.invalidNumber">
+                                        {{this.commonService.numericValue}}
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-3">
+                                <mat-form-field>
+                                    <input matInput placeholder="Email" autocomplete="off"
+                                           formControlName="email" [readonly]="portService.disableText">
+                                    <mat-error *ngIf="portService.form.get('email').errors?.email">
+                                        {{this.commonService.emailValid}}
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-3">
+                                <mat-form-field>
+                                    <mat-select formControlName="status" placeholder="Status" autocomplete="off" required
+                                                [disabled]="portService.disableText">
+                                        <mat-option value="ACTIVE">ACTIVE</mat-option>
+                                        <mat-option value="INACTIVE">INACTIVE</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="portService.form.get('status').errors?.required">
+                                        {{this.commonService.required}} <strong>required</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+                <div class="example-button-row" align="end">
+                    <button [disabled]="!portService.form.valid" color="primary" mat-raised-button
+                            matStepperNext>{{portService.btnText}}
+                    </button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="portService.secondFormGroup">
+            <form [formGroup]="portService.secondFormGroup"
+                  (ngSubmit)="restrictionSave(portService.secondFormGroup.value)">
+                <ng-template matStepLabel>
+                    <button class="ng-theme stepperRight" *ngIf= "portService.arrowAction === 0" (click)="arrow()" mat-mini-fab type="button">
+                        <mat-icon matTooltip="Next">arrow_forward</mat-icon>
+                    </button>
+                </ng-template>
+                <h3 class="berthTitle">Port/Pilot details</h3>
+                <mat-card-content>
+                    <div class="example-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Pilot boarding position" autocomplete="off"
+                                           formControlName="pilotBoardingPosition" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Density" autocomplete="off"
+                                           formControlName="density" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="VHF channel" autocomplete="off"
+                                           formControlName="vhfChannel" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Tugs in port" autocomplete="off"
+                                           formControlName="tugsInPort" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Tugs used for berthing/unberthing" autocomplete="off"
+                                           formControlName="tugsUsedForBerthingUnberthing"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Security level" autocomplete="off"
+                                           formControlName="securityLevel" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="PFSO" autocomplete="off"
+                                           formControlName="pfso" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Shore leave" autocomplete="off"
+                                           formControlName="shoreLeave" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Crew change" autocomplete="off"
+                                           formControlName="repatriation" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                          <div class="col-md-4">
+                            <mat-form-field>
+                              <input matInput placeholder="Restriction for sign Off" autocomplete="off"
+                                     formControlName="restrictionForSignOff" [readonly]="portService.disableText">
+                            </mat-form-field>
+                          </div>
+
+                          <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Nearest airport domestic international" autocomplete="off"
+                                           formControlName="nearestAirportDomesticInternational"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Bunkering facilities" autocomplete="off"
+                                           formControlName="bunkeringFacilities" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Any piracy incident reported in past" autocomplete="off"
+                                           formControlName="anyPiracyIncidentReportedInPast"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Availability of seamen club" autocomplete="off"
+                                           formControlName="availabilityOfSeamenClub"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Identification cards" autocomplete="off"
+                                           formControlName="identificationCards" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Mooring ropes on rent possible" autocomplete="off"
+                                           formControlName="mooringRopesOnRentPossible"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Gangway shore/ship rent possible" autocomplete="off"
+                                           formControlName="gangwayShoreShipRentPossible"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput
+                                           placeholder="Average time taken for vessel berthing from pilot boarding"
+                                           autocomplete="off"
+                                           formControlName="averageTimeTakenForVesselBerthingFromPilotBoarding"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Ballast water management rules regulation" autocomplete="off"
+                                           formControlName="ballastWaterManagementRulesRegulation"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Regulating body (private/govt owned)" autocomplete="off"
+                                           formControlName="regulatingBodyPrivateGovtOwned"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Pilot cancellation charges applicable cases" autocomplete="off"
+                                           formControlName="pilotCancellationChargesApplicableCases"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Availability of repair berth" autocomplete="off"
+                                           formControlName="availabilityOfRepairBerth"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                              </div>
+                              <div class="col-md-4">
+                                <mat-form-field>
+                                  <input matInput placeholder="Dry dock facilities" autocomplete="off"
+                                         formControlName="dryDockFascilities" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Medical nearest big hospital phone number" autocomplete="off"
+                                           formControlName="medicalNearestBigHospitalPhoneNumber"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Coast Guard contact details" autocomplete="off"
+                                           formControlName="coastguardContactDetails" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Harbour Master" autocomplete="off"
+                                           formControlName="harbourMaster" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Chief Medical Officer" autocomplete="off"
+                                           formControlName="chiefMedicalOfficer" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Fire Safety Officer/ Fire Brigade Station" autocomplete="off"
+                                           formControlName="fireSafetyOfficerFireBrigadeStation" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Commandant CISF" autocomplete="off"
+                                           formControlName="commandantCisf" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Local emergency response and support" autocomplete="off"
+                                           formControlName="localEmergencyResponseAndSupport" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Port Contact Information" autocomplete="off"
+                                           formControlName="portContactInformation" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4">
+                                <mat-form-field>
+                                    <input matInput placeholder="Local Law Enforcement Contact Details" autocomplete="off"
+                                           formControlName="localLawEnforcementContactDetails" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <!--Hided Below fields as per the excel sheet-->
+                            <div class="col-md-4" *ngIf="false">
+                                <mat-form-field>
+                                    <input matInput placeholder="Distance from break water to pilot boarding position"
+                                           autocomplete="off"
+                                           formControlName="distanceFromBreakWaterToPilotBoardingPosition"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4" *ngIf="false">
+                                <mat-form-field>
+                                    <input matInput placeholder="Direction of current x speed" autocomplete="off"
+                                           formControlName="directionOfCurrentSpeed"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4" *ngIf="false">
+                                <mat-form-field>
+                                    <input matInput placeholder="Draft restrictions at anchorage" autocomplete="off"
+                                           formControlName="draftRestrictionsAtAnchorage"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4" *ngIf="false">
+                                <mat-form-field>
+                                    <input matInput placeholder="Garbage disposal" autocomplete="off"
+                                           formControlName="garbageDisposal" [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4" *ngIf="false">
+                                <mat-form-field>
+                                    <input matInput placeholder="Bunker supplier companies" autocomplete="off"
+                                           formControlName="bunkerSupplierCompanies"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-4" *ngIf="false">
+                                <mat-form-field>
+                                    <input matInput placeholder="Facility for repairs workshops" autocomplete="off"
+                                           formControlName="facilityForRepairsWorkshops"
+                                           [readonly]="portService.disableText">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                </mat-card-content>
+                <div class="example-button-row" align="end">
+                    <button mat-button matStepperPrevious>Back</button>
+                    <button mat-raised-button color="primary" *ngIf="!this.portService.disableText || this.portService.berthRestrictionID > 0"
+                            [disabled]="!portService.form.valid">{{portService.btnText}}</button>
+                </div>
+            </form>
+        </mat-step>
+    </mat-horizontal-stepper>
+</mat-card>

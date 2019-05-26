@@ -1,0 +1,152 @@
+<div class="row">
+    <div class="col-md-4">
+        <b>Job No: </b> {{jobDetail.jobNo}}
+    </div>
+    <div class="col-md-4">
+        <b>Vessel: </b> {{jobDetail.vesselName}}
+    </div>
+    <div class="col-md-4">
+        <b>Voyage: </b> {{jobDetail.voyage}}
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-4">
+        <b>ETA: </b> {{jobDetail.eta | date: 'dd-MMM, yyyy'}}
+    </div>
+    <div class="col-md-4">
+        <b>Customer: </b> {{jobDetail.customerName}}
+    </div>
+    <div class="col-md-4">
+        <b>Port: </b> {{jobDetail.portName}}
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-4">
+        <b>Currency: </b> {{jobDetail.orgCurrency}}
+    </div>
+    <div class="col-md-4">
+        <b>Customer A/C Balance
+            INR: </b> {{jobDetail.customerAccountBalance > 0 ? jobDetail.customerAccountBalance : 'NA'}}
+    </div>
+    <div class="col-md-4">
+        <b>PDA Amount INR: </b> {{jobDetail.pdaAmount > 0 ? jobDetail.pdaAmount : 'NA'}}
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-4">
+        <b>PDA ROE: </b> {{jobDetail.pdaRoe > 0 ? jobDetail.pdaRoe : 'NA'}}
+    </div>
+</div>
+<br>
+<hr>
+<div class="row">
+    <form (ngSubmit)="saveAllocation(allocationForm.value)" [formGroup]="allocationForm">
+        <div class="col-md-12">
+            <table formArrayName="allocationItems">
+                <thead class="thead">
+                <th>Date</th>
+                <th>Bank Reference No</th>
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>ROE</th>
+                <th>Amt (INR)</th>
+                <th>Allocated Amt</th>
+                <th>Pre Funded Amt</th>
+                <th>Remark</th>
+                <th>Action</th>
+                </thead>
+                <tbody>
+                <tr *ngFor="let orderItem of getControls(); let i = index" [formGroupName]="i">
+                    <td>
+                        <mat-form-field>
+                            <input [matDatepicker]="picker"
+                                   [readonly]="allocationForm.value.allocationItems[i].isApproved"
+                                   formControlName="date" matInput>
+                            <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
+                            <mat-datepicker #picker
+                                            [disabled]="allocationForm.value.allocationItems[i].isApproved"></mat-datepicker>
+                        </mat-form-field>
+                    </td>
+                    <td>
+
+                        <span *ngIf="allocationForm.value.allocationItems[i].id > 0" style="padding-left: 20px;">
+                            {{allocationForm.value.allocationItems[i].bankPaymentId.bankReferenceNo}}
+                        </span>
+                        <mat-form-field *ngIf="allocationForm.value.allocationItems[i].id === null">
+                            <mat-select
+                                    (selectionChange)="getBankRefereneceBasedValue(allocationForm.value.allocationItems[i], i)"
+                                    formControlName="bankPaymentId">
+                                <mat-option *ngFor="let d of inflowService.bankreferenceList;" [disabled]="d.disable"
+                                            [value]="d">{{d.bankReferenceNo}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input formControlName="currency" matInput readonly>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input formControlName="amount" matInput readonly>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input formControlName="roe" matInput readonly>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input appTextAlign formControlName="amtINR" matInput readonly>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                   (keyup)="allocatedFundAmt($event.target.value, i, allocationForm.value.allocationItems[i])"
+                                   [readonly]="allocationForm.value.allocationItems[i].isApproved"
+                                   formControlName="allocatedFund" matInput>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                   [readonly]="allocationForm.value.allocationItems[i].isApproved"
+                                   formControlName="prefundedAmount" matInput>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <span (click)="remark(allocationForm.value.allocationItems[i], i)" class="remark">Remark</span>
+                    </td>
+                    <td>
+                        <span (click)="remove(i)" *ngIf="!allocationForm.value.allocationItems[i].id > 0"
+                              class="remark">Remove</span>
+                        <span (click)="status(i, 1, allocationForm.value.allocationItems[i].id, allocationForm.value.allocationItems[i].bankPaymentId.bankReferenceNo)"
+                              *ngIf="(allocationForm.value.allocationItems[i].id > 0 &&
+                                        allocationForm.value.allocationItems[i].isApproved === null)"
+                              class="remark">Approve</span>
+                        <span (click)="status(i, 0, allocationForm.value.allocationItems[i].id, allocationForm.value.allocationItems[i].bankPaymentId.bankReferenceNo)"
+                              *ngIf="(allocationForm.value.allocationItems[i].id > 0 &&
+                                        allocationForm.value.allocationItems[i].isApproved === null)"
+                              class="remark">Decline</span>
+                        <span *ngIf="allocationForm.value.allocationItems[i].isApproved === true">
+                            <mat-icon matTooltip="Approved">how_to_reg</mat-icon>
+                        </span>
+                        <span *ngIf="allocationForm.value.allocationItems[i].isApproved === false">
+                            <mat-icon matTooltip="Declined">block</mat-icon>
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-12">
+            <button (click)="addNew()" color="primary" mat-raised-button type="button">Add New</button>&nbsp;&nbsp;&nbsp;
+            <button [disabled]="!allocationForm.valid" color="primary" mat-raised-button>Save</button>
+        </div>
+    </form>
+</div>

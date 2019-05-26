@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-12">
+        <h6><b>Change in GRT/NRT/RGT will change the result of the below services.
+            Do you still want to do the changes?</b></h6>
+    </div>
+    <div class="col-md-12">
+        <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table>
+            <ng-container matColumnDef="service">
+                <th *matHeaderCellDef mat-header-cell> Service Name</th>
+                <td *matCellDef="let element"
+                    mat-cell> {{element.itemName.serviceName ? element.itemName.serviceName : element.itemName.description}} </td>
+            </ng-container>
+            <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+        </table>
+    </div>
+    <br>
+</div>
+<div class="example-button-row" align="end" style="margin-top: 10px;">
+    <button mat-raised-button color="primary" (click)="yes()">Yes</button>&nbsp;&nbsp;
+    <button mat-raised-button color="primary" (click)="no()">No</button>
+</div>

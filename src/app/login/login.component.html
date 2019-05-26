@@ -1,0 +1,38 @@
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-3 col-sm-6">
+            <form class="example-form form-contaier" [formGroup]="form" (ngSubmit)="login(form.value)">
+                <div class="example-button-row " align="center">
+                    <h3>Login</h3>
+                </div>
+                <div class="example-button-row" align="center" *ngIf="errorMsg">
+                    <h6>{{errorMsg}}</h6>
+                </div>
+                <mat-form-field class="example-full-width" [ngClass]="{'has-error' : form.get('email').errors &&
+                            (form.get('email').touched) || (form.get('email').dirty)}">
+                    <input formControlName="email" matInput placeholder="User Name" required>
+                    <mat-error *ngIf="form.get('email').errors?.required">
+                        {{this.commonService.required}} <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="example-full-width">
+                    <input matInput placeholder="Password" [type]="hide ? 'password' : 'text'" (keydown.space)="$event.preventDefault();"
+                           formControlName="password" required>
+                    <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    <mat-error *ngIf="form.get('password').errors?.required">
+                        {{this.commonService.required}} <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="form.get('password').errors?.minlength || form.get('password').errors?.minlength">
+                        Password should be 8 to 20 character
+                    </mat-error>
+                    <!--<mat-icon class="hint" matTooltip="1. Minimum 8 Character Maximum 20 Character &nbsp;&nbsp;&nbsp;&nbsp; 2. Atleast 1 Uppercase and Lowercase character &nbsp;&nbsp;&nbsp; 3. Atleast 1 special character. Do not allow any Space">info</mat-icon>-->
+                </mat-form-field>
+                <div class="example-button-row " align="end">
+                    <button mat-raised-button color="primary" [disabled]="!form.valid">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

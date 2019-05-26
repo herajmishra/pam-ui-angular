@@ -1,0 +1,50 @@
+table {
+  width: 100%;
+}
+
+
+.headerSubTable {
+  height: 25px;
+  background: lightgray;
+}
+
+.headerTitle {
+  padding-left: 34px;
+}
+
+
+.remove {
+  cursor: pointer;
+  color: blue;
+}
+
+.tresuryTitle {
+  position: relative;
+  text-align: center;
+}
+
+.totAmtTresury {
+  input {
+    color: black;
+    font-weight: bold;
+  }
+}
+
+.saveBtn {
+  margin-right: 17vh;
+}
+
+.buttons {
+  bottom: 7px;
+}
+
+.remark {
+  cursor: pointer;
+  color: blue;
+}
+
+mat-icon {
+  position: absolute;
+  margin-left: 10px;
+  margin-top: -2px;
+}

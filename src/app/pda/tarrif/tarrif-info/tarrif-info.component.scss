@@ -1,0 +1,39 @@
+
+table {
+  width: 100%;
+  th {
+    //padding-left: 26px !important;
+  }
+  label {
+    padding-left: 26px;
+    margin-top: 6px;
+    color: blue;
+    cursor: pointer;
+  }
+}
+
+.fetchTarif {
+  width: 100%;
+}
+
+mat-checkbox {
+  position: absolute;
+  //margin-top: -8px;
+}
+
+.saveBtn {
+  float: right;
+  margin-right: 12%;
+}
+
+#header-wrapper {
+  max-width: 99% !important;
+  margin: auto;
+}
+
+#header-title {
+  float: left;
+  /* max-width: 100px; */
+  margin-top: 15px;
+  margin-left: 8vh;
+}

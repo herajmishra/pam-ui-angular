@@ -1,0 +1,47 @@
+#header-wrapper {
+  max-width: 99% !important;
+  margin: auto;
+}
+
+#header-title {
+  float: left;
+  /* max-width: 100px; */
+  margin-top: 20px;
+  margin-left: 8vh;
+}
+
+
+.example-button-row {
+  margin-top: 15px !important;
+}
+
+h3 {
+  position: relative;
+  font-size: 1.35rem;
+  margin-top: 8px;
+}
+table {
+  width: 100%;
+
+  th {
+    padding-left: 19px;
+  }
+}
+
+.fetchTarif {
+  width: 100%;
+}
+
+mat-checkbox {
+  position: absolute;
+  margin-top: -8px;
+}
+
+.labelRemove {
+  color: blue;
+  cursor: pointer;
+}
+
+::ng-deep .cdk-overlay-pane {
+  min-width: 350px;
+}

@@ -1,0 +1,145 @@
+<mat-card>
+    <form (ngSubmit)="formSubmit(particularForms.value)" [formGroup]="particularForms">
+        <div class="row">
+            <div class="col-12">
+                <h5>PARTICULAR</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table formArrayName="particularItems">
+                    <thead style="margin-left: 1%">
+                    <tr>
+                        <th>Date</th>
+                        <th style="width: 23vh;">Vendor</th>
+                        <th>Currency</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                        <th style="width: 5vh;">Tax%</th>
+                        <th style="width: 8vh;">Tax Amt</th>
+                        <th style="width: 5vh;">TDS%</th>
+                        <th style="width: 8vh;">TDS Amt</th>
+                        <th style="width: 7vh;">ROE</th>
+                        <th>Mode</th>
+                        <th>Total Amount</th>
+                        <th style="width: 10vh">GST Breakup</th>
+                        <th style="width: 8vh">Calculation Remark</th>
+                        <th style="text-align: center">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let data of getControls(); let i = index" [formGroupName]="i">
+                        <td>
+                            <mat-form-field>
+                                <input [matDatepicker]="picker"
+                                       formControlName="date" matInput>
+                                <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 23vh;">
+                            <mat-form-field>
+                                <input formControlName="vendor" matInput>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field>
+                                <mat-select formControlName="currency">
+                                    <mat-option *ngFor="let d of arrLookupList.CURRENCY" [value]="d.code">
+                                        {{d.value}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)" formControlName="rate"
+                                       matInput>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                       (keyup)="updateTotalAmount(i)" formControlName="amount" matInput>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 5vh;">
+                            <mat-form-field>
+                                <input formControlName="gst" matInput readonly>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 8vh;">
+                            <mat-form-field>
+                                <input formControlName="gstAmount" matInput readonly>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 5vh;">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                       (keyup)="updateTotalAmount(i)" formControlName="tds" matInput>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 8vh;">
+                            <mat-form-field>
+                                <input formControlName="tdsAmount" matInput readonly>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 7vh;">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)" formControlName="roe"
+                                       matInput>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field>
+                                <mat-select formControlName="mode">
+                                    <mat-option *ngFor="let d of arrLookupList.MODE_OF_PAYMENT" [value]="d.code">
+                                        {{d.value}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field>
+                                <input formControlName="totalAmount" matInput readonly>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 10vh">
+                            <section class="example-section">
+                                <mat-slide-toggle class="example-margin"
+                                                  formControlName="gstDetails"></mat-slide-toggle>
+                                <mat-icon (click)="displayGSTDetails(particularForms.value.particularItems[i], i)"
+                                          class="mat-icon">priority_high
+                                </mat-icon>
+                            </section>
+                        </td>
+                        <td class="remove" style="width: 8vh">
+                            <span (click)="remark(i)">Remark</span> |
+                            <span (click)="billDetails(i)">Bill Details</span>
+                        </td>
+                        <td></td>
+                        <!--                        <td>-->
+                        <!--                            <span *ngIf="particularForms.value.particularItems[i].id === null" (click)="remove(i)"-->
+                        <!--                                  style="color: blue;position: relative;bottom: 6px;cursor: pointer;">Remove</span>&nbsp;&nbsp;-->
+                        <!--                            <mat-icon (click)="file.click()" style="cursor: pointer;">attachment</mat-icon>-->
+                        <!--                            <input type="file" accept="image/*" multiple #file (change)=fileEvent($event, i) style="display: none;">-->
+                        <!--                        </td>-->
+                    </tr>
+                    </tbody>
+                </table>
+                <!--                <pre>-->
+                <!--                    {{particularForms.value | json}}-->
+                <!--                </pre>-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <button (click)="addnew()" color="primary" mat-raised-button type="button">Add New</button>
+            </div>
+            <div class="col-md-2">
+                <button [disabled]="!particularForms.valid" color="primary" mat-raised-button type="submit">Save
+                </button>
+            </div>
+        </div>
+    </form>
+</mat-card>

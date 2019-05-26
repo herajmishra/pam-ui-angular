@@ -1,0 +1,17 @@
+table {
+  width: 100%;
+}
+
+.remove {
+  color: blue;
+  cursor: pointer;
+}
+
+::ng-deep .cdk-overlay-pane {
+  min-width: 350px;
+}
+
+.close {
+  color: red;
+  cursor: pointer;
+}

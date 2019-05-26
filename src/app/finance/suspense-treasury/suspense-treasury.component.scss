@@ -1,0 +1,18 @@
+.totAmtTresury {
+  input {
+    color: black;
+    font-weight: bold;
+  }
+}
+
+.remove {
+  cursor: pointer;
+  color: blue;
+}
+.table-col-lg{
+  tr{
+    >td:nth-child(4),th:nth-child(4){
+      width: 14%;
+    }
+  }
+}

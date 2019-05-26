@@ -1,0 +1,424 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~font-awesome/css/font-awesome.css";
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #eee;
+  color: #3C4858;
+  font-weight: 300;
+  font-size: 12px !important;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+b, strong {
+  font-weight: bold !important;
+}
+
+#toast-container > div {
+  opacity: 1;
+}
+
+.mat-form-field {
+  width: 100% !important;
+}
+
+.modalPopupClass {
+  margin-bottom: 28vh;
+}
+
+.modalPopup {
+  margin-bottom: 20vh;
+}
+
+
+/*
+mat-card-header.titleHeader {
+  background-color: #006ead;
+  color: #ffffff;
+  border-radius: 2px;
+  margin-top: 2px;
+}
+
+mat-card-title {
+  position: relative;
+  padding-top: 10px;
+}
+*/
+
+.mat-card-header .mat-card-title {
+  font-size: 15px !important;
+}
+
+.round-back {
+  background-color: transparent !important;
+  border-radius: 50% !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+}
+
+.matIconEdit {
+  background-color: green !important;
+  height: 35px !important;
+  width: 35px !important;
+  margin-left: 5px !important;
+
+  mat-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+  }
+}
+
+.matIconDelete {
+  background-color: red !important;
+  height: 35px !important;
+  width: 35px !important;
+  margin-left: 5px !important;
+
+  mat-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+  }
+}
+
+.matIconInfo {
+  background-color: #5DADE2 !important;
+  height: 35px !important;
+  width: 35px !important;
+  margin-left: 5px !important;
+
+  mat-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+  }
+}
+
+// vessel component accordian
+.containerProfile {
+  .mat-expansion-panel-content {
+    background-color: white !important;
+  }
+}
+
+// Pilot Restriction Master
+.pilotRestriction {
+  mat-step-header {
+    //background-color: transparent !important;
+  }
+
+  .mat-step-label {
+    color: white !important;
+    font-size: larger;
+  }
+
+  .mat-step-icon-state-number {
+    background-color: transparent !important;
+  }
+
+  //span.ng-star-inserted {
+  //  display: none !important;
+  //}
+
+  .mat-step-icon-state-edit {
+    display: none !important;
+  }
+
+  .mat-stepper-horizontal-line {
+    border-top-style: none !important;
+  }
+
+  .berthTitle {
+    position: absolute;
+    margin-left: 65px;
+    top: 34px;
+  }
+
+}
+
+.mat-paginator-page-size-select {
+  width: 35px !important;
+}
+
+.mat-paginator-page-size-select .mat-select-trigger {
+  text-align: center !important;
+}
+
+.mat-mini-fab:not(.ng-theme) {
+  background-color: dimgrey !important;
+  height: 25px !important;
+  width: 25px !important;
+
+  mat-icon {
+    font-size: 1.2em;
+    color: #000;
+    position: absolute;
+    bottom: -4px;
+    right: 0;
+  }
+}
+
+.mat-button {
+  mat-icon {
+    font-size: 1.4em;
+    color: #000;
+    position: absolute;
+    bottom: 1px;
+    right: 4px;
+  }
+}
+
+.delete-button:hover {
+  background-color: #f44336 !important;
+}
+
+.edit-button:hover {
+  background-color: #ffb822 !important;
+}
+
+.view-button:hover {
+  background-color: #34bfa3 !important;
+}
+
+.mat-button:hover {
+  mat-icon {
+    color: #ffffff;
+  }
+}
+
+
+mat-card-content {
+  min-width: 99% !important;
+  margin: auto;
+  padding: -1px 10px !important;
+  margin-bottom: 14px !important;
+}
+
+.mat-table > tbody > tr:hover {
+  background-color: #FAFAFA;
+}
+
+mat-sidenav {
+  background-color: rgba(0, 0, 0, 0.55) !important;
+  border-right: 2px solid darkslategray;
+}
+
+mat-sidenav-container {
+  background: url("./assets/img/ship.jpg");
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+.mat-card {
+  opacity: 0.97;
+}
+
+/**
+ * CUSTOM CONTROLS
+ */
+#search-box {
+  margin: 5px 0;
+  width: 200px !important;
+  float: right !important;
+}
+
+mat-sidenav-container {
+  background: url("./assets/img/ship.jpg");
+}
+
+.addBtn {
+  float: right;
+  margin-left: 2px !important;
+  margin-top: 8px !important;
+}
+
+.backMasterButton {
+  position: absolute !important;
+  width: 38px;
+  height: 38px;
+  top: 27px;
+}
+
+.subMenu {
+  cursor: pointer;
+  color: blue !important;
+}
+
+table th {
+  font-weight: bold !important;
+  color: black !important;
+}
+
+td.action-column {
+  padding-top: 10px !important;
+}
+
+.active {
+  color: #34bfa3;
+}
+
+.inactive {
+  color: #f44336;
+}
+
+//th.mat-header-cell {
+//  text-align: center !important;
+//}
+
+// Sidebar
+mat-sidenav {
+  .mat-expansion-panel-body {
+    padding: 0 24px 16px;
+    position: relative;
+    margin-top: -24px !important;
+  }
+
+  div.mat-list-item-ripple:hover {
+    background-color: transparent !important;
+  }
+}
+
+// Table CSS
+//td.mat-cell {
+//  padding: 0px 5px 0px 12px !important;
+//  border-bottom-width: 1px;
+//  border-bottom-style: solid;
+//  letter-spacing: 0.2px !important;
+//}
+
+//th {
+//  padding-left: 12px !important;
+//}
+
+thead, tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+thead {
+  width: calc(100% - 1em) /* scrollbar is average 1em/16px width, remove it from thead width */
+}
+
+// Tarrif master
+mat-tab-body {
+  margin-top: 15px !important;
+}
+
+//.tarrifMaster {
+//  .mat-tab-label-content {
+//    color: black !important;
+//    font-weight: bold !important;
+//  }
+//}
+
+// Mat-devider
+.mat-divider.mat-divider-horizontal {
+  position: relative !important;
+  padding-bottom: 11px !important;
+}
+
+// Date range Picker
+sat-datepicker-toggle {
+  .mat-icon-button {
+    position: relative !important;
+    margin-left: -34px !important;
+  }
+}
+
+// PDA
+.lbpMM {
+  .mat-form-field-wrapper {
+    width: 80% !important;
+  }
+
+  .lbp {
+    position: absolute !important;
+    margin-left: 12px !important;
+  }
+}
+
+.dynamic-row {
+  //min-height: 40px;
+  //.mat-form-field-appearance-legacy .mat-form-field-underline { background-color: transparent !important;}
+  .mat-select-arrow {
+    border-top: transparent; /*border-top: 0 !important;*/
+  }
+
+  //.mat-form-field-wrapper { margin: 0 20px; }
+
+  .mat-form-field {
+    font-size: 14px
+  }
+
+  .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+
+  //.mat-form-field-appearance-legacy .mat-form-field-infix {padding: 0;}
+}
+
+.dynamic-table {
+  .mat-form-field-wrapper {
+    width: 80%; /*margin: 0 50px 0 0;*/
+  }
+
+  //.mat-header-row {padding-bottom: 10px;}
+  //.mat-form-field-infix {border-top: 0 !important;}
+  //.mat-form-field-appearance-legacy .mat-form-field-wrapper {padding-bottom: 0;}
+  //.mat-form-field-appearance-legacy .mat-form-field-infix {padding: 0;}
+
+  thead > tr > th.action-header {
+    padding: 0 16px;
+  }
+
+  thead > tr > th {
+    text-align: left;
+  }
+
+  tbody > tr /*:first-child*/ > td {
+    padding-top: 10px !important;
+  }
+
+  //tbody > tr > td { font-size: 1.15em; }
+  td {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+}
+
+.dynamic-row {
+  /*::ng-deep*/
+  .mat-form-field-underline {
+    display: none;
+  }
+}
+
+// UTILITY CLASSES
+@for $i from 1 through 1000 {
+  .mwx-#{$i} {
+    min-width: #{$i}px !important;
+  }
+  .wx-#{$i} {
+    width: #{$i}px !important;
+  }
+}
+
+@for $i from 1 through 100 {
+  .mwp-#{$i} {
+    min-width: #{$i}% !important;
+  }
+  .mxwp-#{$i} {
+    max-width: #{$i}% !important;
+  }
+  .wp-#{$i} {
+    width: #{$i}% !important;
+  }
+}

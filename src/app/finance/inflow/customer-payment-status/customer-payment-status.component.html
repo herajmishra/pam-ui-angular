@@ -1,0 +1,166 @@
+<form (ngSubmit)="saveTresury(treasuryForm.value)" [formGroup]="treasuryForm">
+    <div class="col-sm-12">
+        <table formArrayName="treasuryItems">
+            <thead>
+            <tr class="tresuryTitle">
+                <th style="width: 18vh;">Bank Name</th>
+                <th style="width: 18vh;">Customer Bank</th>
+                <th style="width: 15vh;">Remitter</th>
+                <th style="width: 10vh;">Bank Referrence Number</th>
+                <th style="width: 12vh;">Date</th>
+                <th style="width: 12vh;">Currency</th>
+                <th style="width: 13vh;">Amount</th>
+                <th style="width: 10vh;">ROE</th>
+                <th style="width: 13vh;">Amount (INR)</th>
+                <th style="width: 10vh;">Bank Charges (INR)</th>
+                <th style="width: 13vh;">Total Amount (INR)</th>
+                <th style="width: 24vh;">Remark</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let orderItem of getControls(); let i = index" [formGroupName]="i">
+                <td style="width: 18vh;">
+                    <mat-form-field>
+                        <input (keyup)="findBank($event.target.value)" [matAutocomplete]="autoName"
+                               [readonly]="treasuryForm.value.treasuryItems[i].isApproved" [value]="bankCtrl"
+                               formControlName="bankId"
+                               matInput style="width: 70vh"/>
+                    </mat-form-field>
+                    <mat-autocomplete #autoName="matAutocomplete"
+                                      [displayWith]="displayFnBank">
+                        <mat-option *ngFor="let option of filteredBank | async" [value]="option">
+                            {{option.bank}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </td>
+                <td style="width: 18vh;">
+                    <mat-form-field>
+                        <input [readonly]="treasuryForm.value.treasuryItems[i].isApproved"
+                               formControlName="customerBank" matInput maxlength="100">
+                    </mat-form-field>
+                </td>
+                <td style="width: 15vh;">
+                    <mat-form-field>
+                        <input [readonly]="treasuryForm.value.treasuryItems[i].isApproved" formControlName="remitter"
+                               matInput maxlength="100">
+                    </mat-form-field>
+                </td>
+                <td style="width: 10vh;">
+                    <mat-form-field>
+                        <input [readonly]="treasuryForm.value.treasuryItems[i].isApproved"
+                               formControlName="bankReferenceNo" matInput maxlength="30">
+                    </mat-form-field>
+                </td>
+                <td style="width: 12vh;">
+                    <mat-form-field>
+                        <input [matDatepicker]="picker" [readonly]="treasuryForm.value.treasuryItems[i].isApproved"
+                               formControlName="date" matInput>
+                        <mat-datepicker-toggle [disabled]="treasuryForm.value.treasuryItems[i].isApproved"
+                                               [for]="picker" matSuffix></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </td>
+                <td style="width: 12vh;">
+                    <mat-form-field>
+                        <mat-select [disabled]="treasuryForm.value.treasuryItems[i].isApproved"
+                                    formControlName="currency"
+                                    placeholder="">
+                            <mat-option *ngFor="let key of objectKeys(createService.currency)" [value]="key">
+                                {{createService.currency[key]}}
+                            </mat-option>
+
+                        </mat-select>
+                    </mat-form-field>
+                </td>
+                <td style="width: 13vh;">
+                    <mat-form-field>
+                        <input (keypress)="commonService.onlyDecimalNumber($event)" (keyup)="setROE(i)"
+                               [readonly]="treasuryForm.value.treasuryItems[i].isApproved"
+                               formControlName="amountReceived"
+                               matInput>
+                    </mat-form-field>
+                </td>
+                <td style="width: 10vh;">
+                    <mat-form-field>
+                        <input formControlName="roe" matInput readonly>
+                    </mat-form-field>
+                </td>
+                <td style="width: 13vh;">
+                    <mat-form-field>
+                        <input (keypress)="commonService.onlyDecimalNumber($event)" (keyup)="tresuryAmtRcv(i)"
+                               [readonly]="treasuryForm.value.treasuryItems[i].isApproved"
+                               formControlName="grossAmountReceivedLocal"
+                               matInput>
+                    </mat-form-field>
+                </td>
+                <td style="width: 10vh;">
+                    <mat-form-field>
+                        <input (keypress)="commonService.onlyDecimalNumber($event)" (keyup)="tresuryBankCharge(i)"
+                               [readonly]="treasuryForm.value.treasuryItems[i].isApproved"
+                               formControlName="bankCharges"
+                               matInput maxlength="6">
+                    </mat-form-field>
+                </td>
+                <td style="width: 13vh;">
+                    <mat-form-field>
+                        <input (keypress)="commonService.onlyDecimalNumber($event)" (keyup)="tresuryTotAmt()"
+                               formControlName="netAmountReceivedLocal"
+                               matInput readonly>
+                    </mat-form-field>
+                </td>
+                <td style="width: 24vh;">
+                    <span (click)="remark(treasuryForm.value.treasuryItems[i], i)" class="remark">Remark |</span>
+                    <span *ngIf="treasuryForm.value.treasuryItems[i].isApproved === true || treasuryForm.value.treasuryItems[i].isApproved === 1">
+                        <mat-icon matTooltip="Approved">how_to_reg</mat-icon>
+                    </span>
+                    <span *ngIf="treasuryForm.value.treasuryItems[i].isApproved === false || treasuryForm.value.treasuryItems[i].isApproved === 0">
+                        <mat-icon matTooltip="Declined">block</mat-icon>
+                    </span>
+                    <span (click)="remove(i)" *ngIf="treasuryForm.value.treasuryItems[i].id === null" class="remove"> Remove</span>&nbsp;
+                    <span (click)="actionStatus(1, treasuryForm.value.treasuryItems[i], i)"
+                          *ngIf="treasuryForm.value.treasuryItems[i].isApproved === null && treasuryForm.value.treasuryItems[i].id > 0"
+                          class="remove">Approve | </span>
+                    <span (click)="actionStatus(0, treasuryForm.value.treasuryItems[i], i)"
+                          *ngIf="treasuryForm.value.treasuryItems[i].isApproved === null && treasuryForm.value.treasuryItems[i].id > 0"
+                          class="remove">Decline</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 18vh;"></td>
+                <td style="width: 18vh;"></td>
+                <td style="width: 18vh;"></td>
+                <td style="width: 7vh;"></td>
+                <td style="width: 12vh;"></td>
+                <td style="width: 12vh;"></td>
+                <td></td>
+                <td></td>
+                <td class="totAmtTresury" style="width: 13vh;">
+                    <mat-form-field>
+                        <input [value]="amtRcv" matInput readonly>
+                    </mat-form-field>
+                </td>
+                <td class="totAmtTresury" style="width: 10vh;">
+                    <mat-form-field>
+                        <input [value]="bankCharge" matInput readonly>
+                    </mat-form-field>
+                </td>
+                <td class="totAmtTresury" style="width: 13vh;">
+                    <mat-form-field>
+                        <input [value]="totAmount" matInput readonly>
+                    </mat-form-field>
+                </td>
+                <td style="width: 24vh;"></td>
+            </tr>
+            </tbody>
+        </table>
+        <!--<pre>-->
+        <!--{{treasuryForm.value | json}}-->
+        <!--</pre>-->
+    </div>
+    <div class="col-sm-12 buttons">
+        <button (click)="onAddItem()" color="primary" mat-raised-button type="button">Add new</button>&nbsp;&nbsp;
+        <button [disabled]="!treasuryForm.valid" class="pull-right saveBtn" color="primary" mat-raised-button
+                type="submit">Save
+        </button>&nbsp;&nbsp;
+    </div>
+</form>

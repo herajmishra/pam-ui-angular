@@ -1,0 +1,205 @@
+<mat-card>
+    <div id="header-wrapper">
+        <button (click)="back()" *ngIf="!addForm"
+                class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <button (click)="back_main()" *ngIf="addForm" class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <h3 id="header-title">Vendor Bank Details</h3>
+        <div *ngIf="addForm">
+            <button (click)="add()" class="ng-theme addBtn" mat-mini-fab>
+                <mat-icon matTooltip="Add">add</mat-icon>
+            </button>
+            <div>
+                <mat-form-field id="search-box">
+                    <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card-content *ngIf='addForm'>
+        <div class="mat-elevation-z8">
+            <table [dataSource]="dataSource" mat-table matSort>
+
+                <!-- ID Column -->
+                <ng-container matColumnDef="beneficiaryName">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Beneficiary name</th>
+                    <td *matCellDef="let row" mat-cell> {{row.beneficiaryName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="bank">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Bank</th>
+                    <td *matCellDef="let row" mat-cell> {{row.bank}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="bankAddress">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Address</th>
+                    <td *matCellDef="let row" mat-cell> {{row.bankAddress}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="bankAccountNo">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Account number</th>
+                    <td *matCellDef="let row" mat-cell> {{row.bankAccountNo}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ifscCode">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>IFSC code</th>
+                    <td *matCellDef="let row" mat-cell>{{(row.ifscCode === undefined || row.ifscCode === '') ? 'NA' : row.ifscCode }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="micrNo">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>MICR number</th>
+                    <td *matCellDef="let row" mat-cell>{{(row.micrNo === undefined || row.micrNo === '') ? 'NA' : row.micrNo}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="typeOfAccount">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Type of account</th>
+                    <td *matCellDef="let row" mat-cell> {{row.typeOfAccount}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="modeOfPayment">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Mode of payment</th>
+                    <td *matCellDef="let row" mat-cell> {{row.modeOfPayment}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="swiftCode">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Swift code</th>
+                    <td *matCellDef="let row" mat-cell> {{row.swiftCode}} </td>
+                </ng-container>
+
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Action</th>
+                    <td *matCellDef="let row" class="action-column" mat-cell>
+                        <button (click)="update(row.id)" class="round-back edit-button" mat-button>
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button (click)="view(row.id)" class="round-back view-button" mat-button>
+                            <mat-icon>pageview</mat-icon>
+                        </button>
+                        <button (click)="delete(row.id)" class="round-back delete-button" mat-button>
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumns;" mat-row>
+                </tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[10, 20, 30]"></mat-paginator>
+        </div>
+    </mat-card-content>
+
+    <form (ngSubmit)="edit(form.value)" *ngIf="!addForm" [formGroup]="form">
+        <mat-card-content>
+            <div class="example-container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="vendorService.disableText" autocomplete="off" formControlName="beneficiaryName" matInput
+                                   placeholder="Beneficiary name" maxlength="100" required>
+                            <mat-error *ngIf="form.get('beneficiaryName').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="vendorService.disableText" autocomplete="off" formControlName="bank" matInput
+                                   placeholder="Bank" maxlength="100" required>
+                            <mat-error *ngIf="form.get('bank').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <textarea [readonly]="vendorService.disableText" autocomplete="off" formControlName="bankAddress" matInput
+                                      placeholder="Address" maxlength="300" rows="1" required></textarea>
+                            <mat-error *ngIf="form.get('bankAddress').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="vendorService.disableText" autocomplete="off" formControlName="bankAccountNo" matInput
+                                   placeholder="Account number" maxlength="20" required>
+                            <mat-error *ngIf="form.get('bankAccountNo').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('bankAccountNo').errors?.required && form.get('bankAccountNo').errors?.invalidNumber">
+                                {{this.commonService.numericValue}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="vendorService.disableText" autocomplete="off" formControlName="ifscCode" matInput
+                                   placeholder="IFSC code" maxlength="11">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <mat-select [disabled]="vendorService.disableText" autocomplete="off" formControlName="modeOfPayment"
+                                        placeholder="Mode of payment"
+                                        required>
+                                <mat-option *ngFor="let p of this.arrDataLookup.MODE_OF_PAYMENT" [value] = 'p.code'>{{p.value}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('modeOfPayment').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="vendorService.disableText" autocomplete="off" formControlName="micrNo" matInput
+                                   maxlength="9" placeholder="MICR number">
+                            <mat-error *ngIf="!form.get('micrNo').errors?.required && form.get('micrNo').errors?.invalidNumber">
+                                {{this.commonService.numericValue}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <mat-select [disabled]="vendorService.disableText" autocomplete="off" formControlName="typeOfAccount"
+                                        placeholder="Type of account" maxlength="15"
+                                        required>
+                                <mat-option *ngFor="let p of this.arrDataLookup.TYPE_OF_ACCOUNT" [value] = 'p.code'>{{p.value}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('typeOfAccount').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('typeOfAccount').errors?.required && form.get('typeOfAccount').errors?.invalidAlpha">
+                                {{this.commonService.alphabet}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="vendorService.disableText" autocomplete="off" formControlName="swiftCode" matInput
+                                   placeholder="Swift code" maxlength="11" required>
+                            <mat-error *ngIf="form.get('swiftCode').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('swiftCode').errors?.required && form.get('swiftCode').errors?.invalidSwiftCode">
+                                Please enter valid Swift Code
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+        <div align="end" class="example-button-row">
+            <button (click)="back()" color="default" mat-raised-button>Back</button>
+            <button *ngIf="!vendorService.disableText" [disabled]="!form.valid" color="primary"
+                    mat-raised-button>{{btnSubmit}}</button>
+        </div>
+    </form>
+</mat-card>

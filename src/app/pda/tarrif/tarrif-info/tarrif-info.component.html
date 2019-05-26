@@ -1,0 +1,186 @@
+<mat-card>
+    <div id="header-wrapper">
+        <button (click)="back_main()" class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <h3 id="header-title">Tariff Details</h3>
+      <button (click)="addNewCompany()" class="ng-theme addBtn" type="button" mat-mini-fab>
+        <mat-icon matTooltip="Add">add</mat-icon>
+      </button>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card-content>
+        <div class="col-md-12">
+          <div class="col-md-12">
+                <b>Port Name:</b> {{this.tarrifService.portName}}
+            </div>
+        </div>
+        <div class="col-md-12">
+            <form [formGroup]="myForm" (ngSubmit)="save()">
+              <button class="saveBtn mr-0" color="primary" mat-raised-button type="submit" style="margin-top: -1em">
+                Save
+              </button>
+              <br><br>
+
+              <!--<table>-->
+
+                <table class="mat-table dynamic-table" formArrayName="tariif">
+                    <thead class="wp-100">
+                    <tr class="mat-header-row ng-star-inserted">
+                        <th class="mat-header-cell mat-column-name" style="padding-left: 8px; !important;" width="50">
+                            Skip
+                        </th>
+                        <th class="mat-header-cell mat-column-name">Service Code</th>
+                        <th class="mat-header-cell mat-column-name">Vendor Name</th>
+                        <th class="mat-header-cell mat-column-name">Calculation Type</th>
+                        <th class="mat-header-cell mat-column-name">Charge Basis</th>
+                        <th class="mat-header-cell mat-column-name">UOM</th>
+                        <th class="mat-header-cell mat-column-name">Status</th>
+                        <th class="mat-header-cell mat-column-name">Remark</th>
+                        <th class="mat-header-cell mat-column-name action-header">Action</th>
+                    </tr>
+                    </thead>
+                    <tr *ngFor="let comp of gettariffFormDetails(); let i=index" [formGroupName]="i"
+                        [ngClass]="(myForm.value.tariif[i].id > 0) ? 'dynamic-row' : ''">
+                        <input type="hidden" formControlName="id">
+                        <td class="mat-cell mat-column-name" style="padding-left: 8px; !important;" width="50">
+                            <mat-checkbox class="example-margin" formControlName="skipCalculations">
+                            </mat-checkbox>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif no-line">
+                                <mat-select (selectionChange)="getVendorData($event.value, i)"
+                                            [disabled]="myForm.value.tariif[i].id > 0 ? true : false"
+                                            [placeholder]="(myForm.value.tariif[i].id > 0) ? '' : 'Select Service'"
+                                            formControlName="serviceId">
+                                    <mat-option *ngFor="let c of arrPageLoadList.servicesOfPort" [value]="c.id">
+                                        {{c.code}} - {{c.description}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <mat-select [placeholder]="(myForm.value.tariif[i].id > 0) ? '' : 'Select Vendor'"
+                                            [disabled]="myForm.value.tariif[i].id > 0 ? true : false"
+                                            formControlName="vendorId">
+                                    <mat-option *ngFor="let c of arrBindDataofVendorList[i]" [value]="c.id">
+                                        {{c.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <mat-select (selectionChange)="getChargeBasis($event.value)"
+                                            [placeholder]="(myForm.value.tariif[i].id > 0) ? '' : 'Select Calculation Type'"
+                                            [disabled]="myForm.value.tariif[i].id > 0 ? true : false"
+                                            formControlName="calculationType">
+                                    <mat-option *ngFor="let c of this.tarrifService.calculationType" [value]="c.code">
+                                        {{c.value}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <mat-select (selectionChange)="getUOMBasis($event.value)"
+                                            [placeholder]="(myForm.value.tariif[i].id > 0) ? '' : 'Select Charge Basis'"
+                                            [disabled]="myForm.value.tariif[i].id > 0 ? true : false"
+                                            formControlName="chargeBasis">
+                                    <mat-option *ngIf="myForm.value.tariif[i].calculationType == 'LS'" value="LS">LS
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].calculationType == 'FLAT'" value="WEIGHT">
+                                        WEIGHT
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].calculationType == 'FLAT'" value="TIME">
+                                        TIME
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].calculationType == 'SINGLE_BAND'"
+                                                value="WEIGHT">WEIGHT
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].calculationType == 'SINGLE_BAND'"
+                                                value="TIME">TIME
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].calculationType == 'DOUBLE_BAND'"
+                                                value="WEIGHT~TIME">WEIGHT~TIME
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <mat-select [placeholder]="(myForm.value.tariif[i].id > 0) ? '' : 'Select UOM'"
+                                            [disabled]="myForm.value.tariif[i].id > 0 ? true : false"
+                                            formControlName="uom">
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'LS'" value="FIXED">FIXED
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT'" value="NRT">NRT
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT'" value="GRT">GRT
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT'" value="RGRT">
+                                        RGRT
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'TIME'" value="HOUR">HOUR
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'TIME'" value="DAY">DAY
+                                    </mat-option>
+
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="NRT~HOUR">NRT~HOUR
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="NRT~DAY">NRT~DAY
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="GRT~HOUR">GRT~HOUR
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="GRT~DAY">GRT~DAY
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="RGRT~HOUR">RGRT~HOUR
+                                    </mat-option>
+                                    <mat-option *ngIf="myForm.value.tariif[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="RGRT~DAY">RGRT~DAY
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <mat-select [placeholder]="(myForm.value.tariif[i].id > 0) ? '' : 'Select Status'"
+                                            [disabled]="myForm.value.tariif[i].id > 0 ? true : false"
+                                            formControlName="status">
+                                    <mat-option value="ACTIVE">ACTIVE</mat-option>
+                                    <mat-option value="INACTIVE">INACTIVE</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name ">
+                            <mat-form-field class="example-full-width">
+                                <textarea [placeholder]="(myForm.value.tariif[i].id > 0) ? '' : 'Enter Remarks'"
+                                          class="fetchTarif" formControlName="remarks"
+                                          matInput maxlength="100" rows="1"></textarea>
+                            </mat-form-field>
+                        </td>
+                        <td *ngIf="myForm.value.tariif[i].id !== ''" class="mat-cell mat-column-name">
+                            <button (click)="getTarrifDetails(i)" color="primary" mat-button>Select</button>
+                        </td>
+                        <td *ngIf="myForm.value.tariif[i].id === ''" class="mat-cell mat-column-name">
+                            <button (click)="removeEmptyRow(i)" color="primary" mat-button>Remove</button>
+                        </td>
+                    </tr>
+                    <!--</table>-->
+                </table>
+                <br>
+            </form>
+
+            <!--<pre>{{myForm.value.tariif | json}}</pre>-->
+        </div>
+    </mat-card-content>
+</mat-card>
+
+

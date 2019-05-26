@@ -1,0 +1,86 @@
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+// td, th {
+//   width: 25%;
+// }
+
+.mat-raised-button {
+  margin-right: 5px !important;
+}
+
+mat-card-title {
+  background-color: #006ead;
+  color: black;
+  font-size: 18px;
+  padding-left: 10px;
+  padding-bottom: 3px;
+  border-radius: 2px;
+  margin-top: 2px;
+  padding-top: 5px;
+}
+
+
+//.addBtn {
+//  float: right;
+//  margin-left: 2px;
+//}
+
+mat-expansion-panel {
+  background-color: #006ead;
+}
+
+mat-panel-title {
+  color: white;
+  font-size: 18px;
+  position: absolute;
+  margin: -11px 2px 3px -15px;
+}
+
+#header-wrapper {
+  max-width: 99% !important;
+  margin: auto;
+}
+
+#header-title {
+  float: left;
+  /* max-width: 100px; */
+  margin-top: 15px;
+}
+
+.marginLeft {
+  margin-left: 8vh;
+}
+
+span {
+  position: absolute;
+  width: 292px;
+  left: 15px;
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+//pintu kadam start for the sticky for the table
+.mat-header-cell{
+  width: 200px;
+}
+.mat-table-sticky:first-child {
+  border-right: 1px solid #e0e0e0;
+}
+
+.mat-table-sticky:last-child {
+  border-left: 1px solid #e0e0e0;
+}
+
+.example-container {
+  width: 100%;
+  overflow: auto;
+}
+
+//pintu kadam start for the sticky for the table

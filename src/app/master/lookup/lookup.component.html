@@ -1,0 +1,79 @@
+<mat-card>
+    <div id="header-wrapper">
+        <h3 id="header-title">Lookup</h3>
+        <div>
+            <button (click)="add()" class="ng-theme addBtn" mat-mini-fab>
+                <mat-icon matTooltip="Add">add</mat-icon>
+            </button>
+            <div>
+                <mat-form-field id="search-box">
+                    <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card-content>
+        <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" matSort>
+
+                <!-- Group key Column -->
+                <ng-container matColumnDef="groupKey">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Group key</th>
+                    <td mat-cell *matCellDef="let row"> {{row.groupKey}} </td>
+                </ng-container>
+
+                <!-- Code Column -->
+                <ng-container matColumnDef="code">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Code</th>
+                    <td mat-cell *matCellDef="let row"> {{row.code}} </td>
+                </ng-container>
+
+                <!-- Desc Column -->
+                <ng-container matColumnDef="value">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Value</th>
+                    <td mat-cell *matCellDef="let row">{{row.value}} </td>
+                </ng-container>
+
+                <!-- Org Column -->
+                <ng-container matColumnDef="orgId">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Organization</th>
+                    <td mat-cell *matCellDef="let row">{{row.orgId}} </td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                    <td *matCellDef="let row" [ngClass]="row.status.toUpperCase() === 'ACTIVE' ? 'active' : 'inactive'"
+                        mat-cell>{{row.status}} </td>
+                </ng-container>
+
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
+                    <td *matCellDef="let row" class="action-column" mat-cell>
+                        <button (click)="update(row.id)" class="round-back edit-button" mat-button>
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button (click)="view(row.id)" class="round-back view-button" mat-button>
+                            <mat-icon>pageview</mat-icon>
+                        </button>
+                        <button (click)="delete(row.id)" class="round-back delete-button" mat-button>
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                </tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[10, 20, 30]"></mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+
+

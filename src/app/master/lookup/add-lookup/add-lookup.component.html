@@ -1,0 +1,88 @@
+<mat-card>
+    <button (click)="back()"
+            class="ng-theme backMasterButton" mat-mini-fab>
+        <mat-icon matTooltip="Back">arrow_back</mat-icon>
+    </button>
+    <div id="header-wrapper">
+        <h3 id="header-title">Lookup</h3>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save(form.value)">
+            <div class="example-container">
+                <div class="row disableField">
+                    <div *ngIf="!lookupService.clickAction" class="col-md-3">
+                        <label><strong>Group Key:</strong> {{lookupService.groupControl}}</label>
+                    </div>
+                    <div *ngIf="!lookupService.clickAction" class="col-md-3">
+                        <label><strong>Code:</strong> {{lookupService.code}}</label>
+                    </div>
+                </div>
+                <div class="row">
+
+
+                    <div class="col-md-3" *ngIf="lookupService.clickAction">
+                        <mat-form-field>
+                            <input type="text" placeholder="Group key" autocomplete="off" aria-label="Assignee" matInput
+                                   [formControl]="groupControl"
+                                   [matAutocomplete]="auto" [readonly]="lookupService.disableText"
+                                   (keyup)="getKeyName($event.target.value)">
+                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                                              (optionSelected)="selectVal($event.option.value)">
+                                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                                    {{option.groupKey}}
+                                </mat-option>
+                            </mat-autocomplete>
+                            <mat-error *ngIf="form.get('groupKey').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3" *ngIf="lookupService.clickAction">
+                        <mat-form-field>
+                            <input matInput placeholder="Code" autocomplete="off" formControlName="code" required
+                                   [readonly]="lookupService.disableText">
+                            <mat-error *ngIf="form.get('code').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input matInput placeholder="Value" autocomplete="off" formControlName="value" required
+                                   [readonly]="lookupService.disableText">
+                            <mat-error *ngIf="form.get('value').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <mat-select placeholder="Organization" autocomplete="off" formControlName="orgId"
+                                        [disabled]="lookupService.disableText">
+                                <mat-option *ngFor="let org of lookupService.organizationList"
+                                            value="{{org.id}}">{{org.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <mat-select placeholder="Status" autocomplete="off" formControlName="status"
+                                        [disabled]="lookupService.disableText">
+                                <mat-option value="ACTIVE">ACTIVE</mat-option>
+                                <mat-option value="INACTIVE">INACTIVE</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="example-button-row" align="end">
+                <!--<button mat-raised-button color="default" type="button" (click)="back()" matTooltip="Back">Back</button>&nbsp;-->
+                <button mat-raised-button color="primary" *ngIf="!lookupService.disableText" matTooltip="Add"
+                        [disabled]="!form.valid">{{lookupService.btnText}}</button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

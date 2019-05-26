@@ -1,0 +1,59 @@
+<mat-card>
+    <div id="header-wrapper">
+        <h3 id="header-title">TREASURY (INFLOW)</h3>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table [dataSource]="dataSource"
+                   class="mat-elevation-z8" mat-table
+                   multiTemplateDataRows>
+                <ng-container matColumnDef="customerCode">
+                    <th *matHeaderCellDef mat-header-cell> Customer Code</th>
+                    <td *matCellDef="let element" mat-cell> {{element.code}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="customerName">
+                    <th *matHeaderCellDef mat-header-cell> Customer Name</th>
+                    <td *matCellDef="let element" mat-cell> {{element.name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="country">
+                    <th *matHeaderCellDef mat-header-cell> Country</th>
+                    <td *matCellDef="let element" mat-cell> {{element.location}} </td>
+                </ng-container>
+
+
+                <ng-container matColumnDef="expandedDetail">
+                    <td *matCellDef="let element" [attr.colspan]="columnsToDisplay.length" mat-cell>
+                        <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+                             class="example-element-detail">
+                            <div *ngIf="custId === element.id">
+                                <app-customer-payment-status (updateData)="updateChildData($event)"
+                                                             [custID]="element.id"></app-customer-payment-status>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+
+                <tr *matHeaderRowDef="columnsToDisplay" mat-header-row></tr>
+                <tr (click)="expandedElement = expandedElement === element ? null : element; open(expandedElement)"
+                    *matRowDef="let element; columns: columnsToDisplay;"
+                    [class.example-expanded-row]="expandedElement === element"
+                    class="example-element-row"
+                    [ngClass]="element.id === selectTR ? 'backColor' : ''"
+                    mat-row>
+                </tr>
+                <tr *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row" mat-row></tr>
+            </table>
+        </div>
+        <!--<div class="col-md-12">-->
+        <!--&lt;!&ndash;<br><br><h5>TREASURY INFLOW SUSPENSE</h5>&ndash;&gt;-->
+        <!--</div>-->
+    </div>
+    <br>
+    <app-suspense-treasury [getSuspenseData]="getSuspenseData"></app-suspense-treasury>
+</mat-card>
+

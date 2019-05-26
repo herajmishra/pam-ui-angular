@@ -1,0 +1,198 @@
+<mat-card>
+    <div id="header-wrapper">
+        <button (click)="back_main()" class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <h3 id="header-title">Tariff Details</h3>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card>
+        <div class="row">
+            <div class="col-md-3"><b>Calculation Type:</b> {{tarrifService.tarrifHeaderDetails.calculationType}}</div>
+            <div class="col-md-3"><b>Charge Basis:</b> {{tarrifService.tarrifHeaderDetails.chargeBasis}}</div>
+            <div class="col-md-3"><b>UOM:</b> {{tarrifService.tarrifHeaderDetails.uom}}</div>
+        </div>
+    </mat-card>
+    <mat-tab-group class="tarrifMaster">
+        <mat-tab label="FOREIGN">
+            <form (ngSubmit)="save()" [formGroup]="myForm">
+                <!--<table>-->
+
+                <table class="mat-table dynamic-table" formArrayName="currency">
+                    <thead class="wp-100">
+                    <tr class="mat-header-row ng-star-inserted">
+                        <th class="mat-header-cell mat-column-name">Currency</th>
+                        <th class="mat-header-cell mat-column-name">Rate</th>
+                        <th *ngIf="tarrifService.tarrifHeaderDetails.calculationType === 'FLAT'"
+                            class="mat-header-cell mat-column-name">Min Charge
+                        </th>
+                        <th class="mat-header-cell mat-column-name">Rebate Applicable</th>
+                        <th class="mat-header-cell mat-column-name">Rebate (%)</th>
+                        <th class="mat-header-cell mat-column-name wp-17">Effective From - To Date</th>
+                        <th class="mat-header-cell mat-column-name action-header">Action</th>
+                    </tr>
+                    </thead>
+                    <tr *ngFor="let comp of getMyFormCurrencyControls(); let i=index" [formGroupName]="i"
+                        [ngClass]="myForm.value.currency[i].id > 0 ? 'dynamic-row' : ''">
+                        <input formControlName="id" type="hidden">
+                        <input formControlName="isForeign" type="hidden">
+                        <input formControlName="minCharge" type="hidden">
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <mat-select [placeholder]="myForm.value.currency[i].id > 0 ? '': 'Enter currency'"
+                                            (selectionChange)="tarrifService.setMinDate($event.value, 1, myForm.value.currency)"
+                                            formControlName="currency">
+                                    <mat-option>Select</mat-option>
+                                    <mat-option *ngFor="let c of arrCurrency.CURRENCY"
+                                                [value]="c.code">{{c.code}} - {{c.value}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name dynamic-test">
+                            <mat-form-field class="fetchTarif no-line">
+                                <input (keypress)="validateNumber($event)" formControlName="rate" matInput
+                                       [placeholder]="myForm.value.currency[i].id > 0 ? '' : 'Enter rate'"
+                                       maxlength="10">
+                            </mat-form-field>
+                        </td>
+                        <td *ngIf="tarrifService.tarrifHeaderDetails.calculationType === 'FLAT'"
+                            class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <input (keypress)="validateNumber($event)"
+                                       [placeholder]="myForm.value.currency[i].id > 0 ? '' : 'Enter minimum charge'"
+                                       formControlName="minCharge"
+                                       matInput
+                                       maxlength="10">
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-slide-toggle class="example-margin"
+                                              formControlName="applicable"></mat-slide-toggle>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <!--{{myForm.value.currency[i].applicable | json}}-->
+                            <mat-form-field class="fetchTarif">
+                                <input (keypress)="validateNumber($event)"
+                                       [ngClass]="myForm.value.currency[i].applicable ? '' : 'disable_percentage'"
+                                       [value]="myForm.value.currency[i].applicable ? myForm.value.currency[i].rebatePercent : '0'"
+                                       [placeholder]="myForm.value.currency[i].id > 0 ? '' : 'Enter rebate percentage'"
+                                       formControlName="rebatePercent" matInput maxlength="10">
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name wp-17">
+                            <mat-form-field>
+                                <input [min]="tarrifService.foreignMinDate[i]" [satDatepicker]="picker2"
+                                       formControlName="date" matInput
+                                       [placeholder]="myForm.value.currency[i].id > 0 ? '' : 'Choose a date'">
+                                <sat-datepicker #picker2 [rangeMode]="true">
+                                </sat-datepicker>
+                                <sat-datepicker-toggle [for]="picker2" matSuffix></sat-datepicker-toggle>
+                            </mat-form-field>
+                        </td>
+                        <td *ngIf="myForm.value.currency[i].id == '';else blank_section"
+                            class="mat-cell mat-column-name">
+                            <button (click)="removeEmptyRow(i, true)" color="primary" mat-button>Remove</button>
+                        </td>
+                        <ng-template #blank_section>&nbsp;</ng-template>
+                    </tr>
+                    <!--<pre>{{myForm.value.currency | json}}</pre>-->
+                    <!--</table>-->
+                </table>
+                <br>
+                <button (click)="addNewCurrency()" color="primary" mat-raised-button type="button">Add new</button>
+                <button class="saveBtn" color="primary" mat-raised-button type="submit">Save</button>
+            </form>
+        </mat-tab>
+        <mat-tab label="COASTAL">
+            <form (ngSubmit)="saveCoastal()" [formGroup]="coastalForm">
+                <!--<table>-->
+
+                <table class="mat-table dynamic-table" formArrayName="currency">
+                    <thead class="wp-100">
+                    <tr class="mat-header-row ng-star-inserted">
+                        <th class="mat-header-cell mat-column-name">Currency</th>
+                        <th class="mat-header-cell mat-column-name">Rate</th>
+                        <th *ngIf="tarrifService.tarrifHeaderDetails.calculationType === 'FLAT'"
+                            class="mat-header-cell mat-column-name">Min Charge
+                        </th>
+                        <th class="mat-header-cell mat-column-name">Rebate Application</th>
+                        <th class="mat-header-cell mat-column-name">Rebate (%)</th>
+                        <th class="mat-header-cell mat-column-name wp-17">Effective From - To Date</th>
+                        <th class="mat-header-cell mat-column-name action-header">Action</th>
+                    </tr>
+                    </thead>
+                    <tr *ngFor="let comp of getCoastalFormCurrencyControls(); let i=index" [formGroupName]="i"
+                        [ngClass]="coastalForm.value.currency[i].id > 0 ? 'dynamic-row' : ''">
+                        <input formControlName="id" type="hidden">
+                        <input formControlName="isForeign" type="hidden">
+                        <input formControlName="minCharge" type="hidden">
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <mat-select [placeholder]="coastalForm.value.currency[i].id > 0 ? '' : 'Enter currency'"
+                                            (selectionChange)="tarrifService.setMinDate($event.value, 0, coastalForm.value.currency)"
+                                            formControlName="currency">
+                                    <mat-option>Select</mat-option>
+                                    <mat-option *ngFor="let c of arrCurrency.CURRENCY"
+                                                [value]="c.code">{{c.code}} - {{c.value}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <input (keypress)="validateNumber($event)" formControlName="rate" matInput
+                                       [placeholder]="coastalForm.value.currency[i].id > 0 ? '' : 'Enter rate'"
+                                       maxlength="10">
+                            </mat-form-field>
+                        </td>
+                        <td *ngIf="tarrifService.tarrifHeaderDetails.calculationType === 'FLAT'"
+                            class="mat-cell mat-column-name">
+                            <mat-form-field class="fetchTarif">
+                                <input (keypress)="validateNumber($event)"
+                                       [placeholder]="coastalForm.value.currency[i].id > 0 ? '' : 'Enter minimum charge'"
+                                       formControlName="minCharge"
+                                       matInput
+                                       maxlength="10">
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <mat-slide-toggle class="example-margin"
+                                              formControlName="applicable"></mat-slide-toggle>
+                        </td>
+                        <td class="mat-cell mat-column-name">
+                            <!--{{myForm.value.currency[i].applicable | json}}-->
+                            <mat-form-field class="fetchTarif">
+                                <input (keypress)="validateNumber($event)"
+                                       [ngClass]="coastalForm.value.currency[i].applicable ? '' : 'disable_percentage'"
+                                       [value]="coastalForm.value.currency[i].applicable ? coastalForm.value.currency[i].rebatePercent : '0'"
+                                       [placeholder]="coastalForm.value.currency[i].id > 0 ? '' : 'Enter rebate'"
+                                       formControlName="rebatePercent" matInput maxlength="10">
+                            </mat-form-field>
+                        </td>
+                        <td class="mat-cell mat-column-name wp-17">
+                            <mat-form-field>
+                                <input [min]="tarrifService.coastalMinDate[i]" [satDatepicker]="picker2"
+                                       formControlName="date" matInput
+                                       [placeholder]="coastalForm.value.currency[i].id > 0 ? '' : 'Select date'"
+                                       placeholder="Choose a date">
+                                <sat-datepicker #picker2 [rangeMode]="true">
+                                </sat-datepicker>
+                                <sat-datepicker-toggle [for]="picker2" matSuffix></sat-datepicker-toggle>
+                            </mat-form-field>
+                        </td>
+                        <td *ngIf="coastalForm.value.currency[i].id == '';else blank_section"
+                            class="mat-cell mat-column-name">
+                            <button (click)="removeEmptyRow(i, false)" color="primary" mat-button>Remove</button>
+                        </td>
+                        <ng-template #blank_section>&nbsp;</ng-template>
+                    </tr>
+                    <!--</table>-->
+                </table>
+                <br>
+                <button (click)="addNewCoastal()" color="primary" mat-raised-button type="button">Add new</button>
+                <button class="saveBtn" color="primary" mat-raised-button type="submit">Save</button>
+            </form>
+        </mat-tab>
+    </mat-tab-group>
+</mat-card>
+

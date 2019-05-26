@@ -1,0 +1,360 @@
+<mat-card>
+  <div id="header-wrapper">
+    <button (click)="back()" *ngIf="!addForm" class="ng-theme backMasterButton" mat-mini-fab>
+      <mat-icon matTooltip="Back">arrow_back</mat-icon>
+    </button>
+    <h3 [ngClass]="!addForm ? 'marginLeft' : ''" id="header-title">Vessel</h3>
+    <div *ngIf="addForm">
+      <button (click)="add()" class="ng-theme addBtn" mat-mini-fab>
+        <mat-icon matTooltip="Add">add</mat-icon>
+      </button>
+      <div>
+        <mat-form-field id="search-box">
+          <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+    <mat-divider></mat-divider>
+  </div>
+  <mat-card-content *ngIf='addForm'>
+    <div class="example-container mat-elevation-z8">
+      <table [dataSource]="dataSource" mat-table matSort>
+        <!-- pintu start title column -->
+        <ng-container matColumnDef="title" sticky>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
+          <td *matCellDef="let row" mat-cell> {{row.title}} </td>
+        </ng-container>
+        <!-- pintu end title column-->
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="name">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
+          <td *matCellDef="let row" mat-cell> {{row.name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="imo">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>IMO</th>
+          <td *matCellDef="let row" mat-cell> {{row.imo}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="type">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Type</th>
+          <td *matCellDef="let row" mat-cell> {{row.type}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="flag">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Flag</th>
+          <td *matCellDef="let row" mat-cell> {{row.flag}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="grt">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> GRT</th>
+          <td *matCellDef="let row" mat-cell> {{row.grt}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nrt">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> NRT</th>
+          <td *matCellDef="let row" mat-cell> {{row.nrt}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="reducedGrt">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> Reduced GRT</th>
+          <td *matCellDef="let row" mat-cell> {{row.reducedGrt}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lengthLbp">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> PBL</th>
+          <td *matCellDef="let row" mat-cell> {{row.lengthLbp}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lengthLoa">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> LOA</th>
+          <td *matCellDef="let row" mat-cell> {{row.lengthLoa}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="beam">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> Beam</th>
+          <td *matCellDef="let row" mat-cell> {{row.beam}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="trade">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> Trade</th>
+          <td *matCellDef="let row" mat-cell> {{row.trade}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> Status</th>
+          <td *matCellDef="let row" [ngClass]="row.status.toUpperCase() === 'ACTIVE' ? 'active' : 'inactive'"
+              mat-cell> {{row.status}} </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action" stickyEnd>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header> Action</th>
+          <td *matCellDef="let row" class="action-column" mat-cell>
+            <button (click)="update(row.id)" class="round-back edit-button" mat-button>
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button (click)="view(row.id)" class="round-back view-button" mat-button>
+              <mat-icon>pageview</mat-icon>
+            </button>
+            <button (click)="delete(row.id)" class="round-back delete-button" mat-button>
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row>
+        </tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[10, 20, 30]"></mat-paginator>
+    </div>
+  </mat-card-content>
+
+  <form (ngSubmit)="save(form.value)" *ngIf="!addForm" [formGroup]="form">
+    <mat-card-content>
+      <div class="example-container">
+        <div class="row">
+          <div class="col-md-3">
+            <mat-form-field>
+              <mat-select [disabled]="vesselService.disableText" formControlName="title"
+                          placeholder="Title" autocomplete="off" required>
+                <mat-option *ngFor="let t of this.arrDataLookup.VESSEL_ANNOTATION " [value]='t.value'>
+                  {{t.value}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('title').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="name" matInput
+                     placeholder="Name" maxlength="35" autocomplete="off" required>
+              <mat-error *ngIf="form.get('name').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="imo" matInput
+                     placeholder="IMO" maxlength="7" autocomplete="off" required>
+              <mat-error *ngIf="form.get('imo').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+              <mat-error
+                *ngIf="!form.get('imo').errors?.required && form.get('imo').errors?.invalidNumber">
+                {{this.commonService.numericValue}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <mat-select [disabled]="vesselService.disableText" formControlName="type" placeholder="Type"
+                          autocomplete="off" required>
+                <mat-option *ngFor="let p of this.arrDataLookup.VESSEL_TYPE" [value]='p.code'>
+                  {{p.value}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('type').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [formControl]="groupControl" [matAutocomplete]='auto'
+                     [readonly]="vesselService.disableText" aria-label="Assignee" matInput autocomplete="off"
+                     placeholder="Flag" type="text">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                                (optionSelected)="selectVal($event.option.value)">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                  {{option.name}}
+                </mat-option>
+              </mat-autocomplete>
+
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <mat-select [disabled]="vesselService.disableText" formControlName="trade"
+                          placeholder="Trade" autocomplete="off" required>
+                <mat-option *ngFor="let p of this.arrDataLookup.TRADE" [value]='p.code'>{{p.value}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('trade').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="grt" matInput
+                     placeholder="GRT" maxlength="6" autocomplete="off" required>
+              <mat-error *ngIf="form.get('grt').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+              <mat-error
+                *ngIf="!form.get('grt').errors?.required && form.get('grt').errors?.invalidNumber">
+                {{this.commonService.numericValue}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="nrt" matInput
+                     placeholder="NRT" maxlength="6" autocomplete="off" required>
+              <mat-error *ngIf="form.get('nrt').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+              <mat-error
+                *ngIf="!form.get('nrt').errors?.required && form.get('nrt').errors?.invalidNumber">
+                {{this.commonService.numericValue}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="reducedGrt" matInput
+                     placeholder="Reduced GRT" maxlength="6" autocomplete="off">
+              <mat-error
+                *ngIf="!form.get('reducedGrt').errors?.required && form.get('reducedGrt').errors?.invalidNumber">
+                {{this.commonService.numericValue}}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="yearOfBuilt" matInput
+                     placeholder="Year of Built" maxlength="4" autocomplete="off">
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="yearOfCommissioned" matInput
+                     placeholder="Year of Delivered" maxlength="4" autocomplete="off">
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="lengthLbp" matInput
+                     maxlength="6" autocomplete="off" placeholder="Length (PBL)">
+              <mat-error
+                *ngIf="!form.get('lengthLbp').errors?.required && form.get('lengthLbp').errors?.invalidMeterUnitNumber">
+                Please enter valid LBP
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="lengthLoa" matInput
+                     maxlength="6" autocomplete="off" placeholder="Length (LOA)">
+              <mat-error
+                *ngIf="!form.get('lengthLoa').errors?.required && form.get('lengthLoa').errors?.invalidMeterUnitNumber">
+                Please enter valid LOA
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input [readonly]="vesselService.disableText" formControlName="beam" matInput maxlength="6"
+                     autocomplete="off" placeholder="Beam">
+              <mat-error
+                *ngIf="!form.get('beam').errors?.required && form.get('beam').errors?.invalidMeterUnitNumber">
+                Please enter valid beam
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-form-field>
+              <input (keyup)="findOwner($event.target.value)" [formControl]="ownerCtrl" [matAutocomplete]='autoOwner'
+                     [readonly]="vesselService.disableText" aria-label="Assignee" matInput autocomplete="off"
+                     placeholder="Owner" type="text">
+              <mat-autocomplete #autoOwner="matAutocomplete" [displayWith]="displayFnOwner"
+                                (optionSelected)="selectValOwner($event.option.value)">
+                <mat-option *ngFor="let option of filteredOwner | async" [value]="option">
+                  {{option.name}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <!-- <div class="col-md-3">
+              <mat-form-field>
+                  <input [readonly]="vesselService.disableText" formControlName="containerOnDeck" matInput
+                      placeholder="Container on Deck" autocomplete="off" maxlength="4">
+                  <mat-error *ngIf="form.get('containerOnDeck').errors?.invalidNumber">
+                      {{this.commonService.numericValue}}
+                  </mat-error>
+              </mat-form-field>
+          </div>
+          <div class="col-md-3">
+              <mat-form-field>
+                  <input [readonly]="vesselService.disableText" formControlName="containerOnHold" matInput
+                      placeholder="Container on Hold" autocomplete="off" maxlength="4">
+                  <mat-error
+                      *ngIf="!form.get('containerOnHold').errors?.required && form.get('containerOnHold').errors?.invalidNumber">
+                      {{this.commonService.numericValue}}
+                  </mat-error>
+              </mat-form-field>
+          </div>
+          <div class="col-md-3">
+              <mat-form-field>
+                  <input [readonly]="vesselService.disableText" formControlName="maxTues" matInput
+                      placeholder="Max tues" autocomplete="off" maxlength="4">
+                  <mat-error
+                      *ngIf="!form.get('maxTues').errors?.required && form.get('maxTues').errors?.invalidNumber">
+                      {{this.commonService.numericValue}}
+                  </mat-error>
+              </mat-form-field>
+          </div>
+          <div class="col-md-3">
+              <mat-form-field>
+                  <input [readonly]="vesselService.disableText" formControlName="max20s" matInput
+                      placeholder="Max 20s" autocomplete="off" maxlength="4">
+                  <mat-error
+                      *ngIf="!form.get('max20s').errors?.required && form.get('max20s').errors?.invalidNumber">
+                      {{this.commonService.numericValue}}
+                  </mat-error>
+              </mat-form-field>
+          </div>
+          <div class="col-md-3">
+              <mat-form-field>
+                  <input [readonly]="vesselService.disableText" formControlName="max40s" matInput
+                      placeholder="Max 40s" autocomplete="off" maxlength="4">
+                  <mat-error
+                      *ngIf="!form.get('max40s').errors?.required && form.get('max40s').errors?.invalidNumber">
+                      {{this.commonService.numericValue}}
+                  </mat-error>
+              </mat-form-field>
+          </div>-->
+          <div class="col-md-3">
+            <mat-form-field>
+              <mat-select [disabled]="vesselService.disableText" formControlName="status"
+                          placeholder="Status" autocomplete="off" required>
+                <mat-option value="ACTIVE">ACTIVE</mat-option>
+                <mat-option value="INACTIVE">INACTIVE</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('status').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <div align="end" class="example-button-row">
+      <!-- pintu change for the Print and Send Mail-->
+      <button type="button" color="primary" mat-raised-button
+              (click)="openVesselFieldDialog($event,'print')">Print</button>
+      <button type="button" color="primary" mat-raised-button
+              (click)="openVesselFieldDialog($event,'email')">Email</button>
+      <!-- pintu change for the Print and Send Mail-->
+      <button type="submit" *ngIf="!vesselService.disableText" [disabled]="!form.valid" color="primary"
+              mat-raised-button>{{btnSubmit}}</button>
+    </div>
+  </form>
+</mat-card>

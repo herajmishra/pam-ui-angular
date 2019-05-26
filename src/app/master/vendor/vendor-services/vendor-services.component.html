@@ -1,0 +1,71 @@
+<mat-card>
+    <div id="header-wrapper">
+        <button (click)="back()" *ngIf="!addForm"
+                class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <button (click)="back_main()" *ngIf="addForm" class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <h3 id="header-title">Vendor Service Details</h3>
+        <div *ngIf="addForm">
+            <button (click)="add()" class="ng-theme addBtn" mat-mini-fab>
+                <mat-icon matTooltip="Add">add</mat-icon>
+            </button>
+            <div>
+                <mat-form-field id="search-box">
+                    <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card-content *ngIf='addForm'>
+        <div class="mat-elevation-z8">
+            <table [dataSource]="dataSource" mat-table matSort>
+
+                <!-- Service Name Column -->
+                <ng-container matColumnDef="description">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
+                    <td *matCellDef="let row" mat-cell> {{row.description}} </td>
+                </ng-container>
+
+                 Name Column
+                <ng-container matColumnDef="code">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Code</th>
+                <td *matCellDef="let row" mat-cell> {{row.code}} </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumns;" mat-row>
+                </tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[10, 20, 30]"></mat-paginator>
+        </div>
+    </mat-card-content>
+
+    <form (ngSubmit)="edit(form.value)" *ngIf="!addForm" [formGroup]="form">
+        <mat-card-content>
+            <div class="example-container">
+                <div class="row">
+                    <div class="col-md-5">
+                        <mat-form-field>
+                            <mat-select placeholder="Name" autocomplete="off" formControlName="serviceId">
+                                <mat-option *ngFor="let item of vendorService.arrServiceDetails" [value]="item.id">
+                                    {{item.description}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4" style="margin-top: 5px;">
+                        <button (click)="back()" color="default" mat-raised-button>Back</button>
+                        <button *ngIf="!vendorService.disableText" [disabled]="!form.valid" color="primary"
+                                mat-raised-button>{{btnSubmit}}</button>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </form>
+</mat-card>

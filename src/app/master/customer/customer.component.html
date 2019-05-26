@@ -1,0 +1,228 @@
+<mat-card>
+    <div id="header-wrapper">
+        <button (click)="back()" *ngIf="!addForm"
+                class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <h3 [ngClass]="!addForm ? 'marginLeft' : ''" id="header-title">Customer Details</h3>
+        <div *ngIf="addForm">
+            <button (click)="add()" class="ng-theme addBtn" mat-mini-fab>
+                <mat-icon matTooltip="Add">add</mat-icon>
+            </button>
+            <div>
+                <mat-form-field id="search-box">
+                    <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card-content *ngIf='addForm'>
+        <div class="mat-elevation-z8">
+            <table [dataSource]="dataSource" mat-table matSort>
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
+          <td mat-cell *matCellDef="let row"> {{row.code}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+          <td mat-cell *matCellDef="let row"> {{row.type}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
+          <td mat-cell *matCellDef="let row"> {{row.address}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+            <td mat-cell *matCellDef="let row"> {{row.email}} </td>
+         </ng-container>
+
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
+          <td mat-cell *matCellDef="let row"> {{row.location}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="currency">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Currency</th>
+          <td mat-cell *matCellDef="let row"> {{row.currency}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tanNo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>TAN number</th>
+          <td mat-cell *matCellDef="let row"> {{row.tanNo}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="panNo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>PAN number</th>
+          <td mat-cell *matCellDef="let row"> {{row.panNo}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+            <td *matCellDef="let row" [ngClass]="row.status.toUpperCase() === 'ACTIVE' ? 'active' : 'inactive'"
+                mat-cell> {{row.status | uppercase}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="button">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>More details</th>
+            <td mat-cell *matCellDef="let row">
+                <button (click)="bankdetails(row.name,row.id)" color="primary" mat-button>Bank</button>
+            </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
+            <td *matCellDef="let row" class="action-column" mat-cell>
+                <button (click)="update(row.id)" class="round-back edit-button" mat-button>
+              <mat-icon>edit</mat-icon>
+            </button>
+                <button (click)="view(row.id)" class="round-back view-button" mat-button>
+              <mat-icon>pageview</mat-icon>
+            </button>
+                <button (click)="delete(row.id)" class="round-back delete-button" mat-button>
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+                <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumns;" mat-row>
+                </tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[10, 20, 30]"></mat-paginator>
+        </div>
+    </mat-card-content>
+
+    <form (ngSubmit)="edit(form.value)" *ngIf="!addForm" [formGroup]="form">
+        <mat-card-content>
+            <div class="example-container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="customerService.disableText" autocomplete="off" formControlName="name" matInput
+                                   placeholder="Name" maxlength="100" required>
+                            <mat-error *ngIf="form.get('name').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="customerService.disableText" autocomplete="off" formControlName="code" matInput
+                                   placeholder="Code" maxlength="6" required>
+                            <mat-error *ngIf="form.get('code').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <mat-select [disabled]="customerService.disableText" autocomplete="off" formControlName="type"
+                                        placeholder="Type"
+                                        required>
+                                <mat-option *ngFor="let p of this.arrDataLookup.CUSTOMER_TYPE" [value] = 'p.code'>{{p.value}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('type').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <textarea [readonly]="customerService.disableText" autocomplete="off" formControlName="address" matInput
+                                      placeholder="Address" maxlength="300" rows="1" required></textarea>
+                            <mat-error *ngIf="form.get('address').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="customerService.disableText" autocomplete="off" formControlName="email" matInput
+                                      placeholder="Email" maxlength="25" required>
+                            <mat-error *ngIf="form.get('email').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="form.get('email').errors?.email">
+                                {{this.commonService.emailValid}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="customerService.disableText" autocomplete="off" formControlName="location" matInput
+                                   placeholder="Location" maxlength="25" required>
+                            <mat-error *ngIf="form.get('location').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('location').errors?.required && form.get('location').errors?.invalidAlpha">
+                                {{this.commonService.alphabet}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="customerService.disableText" autocomplete="off" formControlName="currency" matInput
+                                   maxlength="3" placeholder="Currency" maxlength="3" required>
+                            <mat-error *ngIf="form.get('currency').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('currency').errors?.required && form.get('currency').errors?.invalidAlpha">
+                                {{this.commonService.alphabet}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="customerService.disableText" autocomplete="off" formControlName="tanNo" matInput
+                                   placeholder="TAN number" maxlength="15">
+                            <mat-error *ngIf="!form.get('tanNo').errors?.required && form.get('tanNo').errors?.invalidTanNumber">
+                                {{this.commonService.tanNumber}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <input [readonly]="customerService.disableText" autocomplete="off" formControlName="panNo" matInput
+                                   placeholder="PAN number" maxlength="15">
+                            <mat-error *ngIf="!form.get('panNo').errors?.required && form.get('panNo').errors?.invalidPanNumber">
+                                {{this.commonService.panNumber}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field>
+                            <mat-select [disabled]="customerService.disableText" autocomplete="off" formControlName="status"
+                                        placeholder="Status"
+                                        required>
+                                <mat-option value="ACTIVE">ACTIVE</mat-option>
+                                <mat-option value="INACTIVE">INACTIVE</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="form.get('status').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+        <div align="end" class="example-button-row">
+            <button *ngIf="!customerService.disableText" [disabled]="!form.valid" color="primary"
+                    mat-raised-button>{{btnSubmit}}</button>
+        </div>
+    </form>
+</mat-card>

@@ -1,0 +1,30 @@
+.form-contaier {
+  //position: absolute;
+  //top: 20vh;
+  margin-top: 20vh;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px #000000;
+  //width: 54vh;
+  opacity: 0.95;
+}
+
+mat-icon {
+  cursor: pointer;
+}
+
+h6 {
+  color: red;
+}
+
+.hint {
+  position: absolute;
+  margin-left: 4vh;
+  bottom: 1vh;
+}
+
+form {
+  opacity: 0.9 !important;
+  border-radius: 0 !important;
+}

@@ -1,0 +1,190 @@
+<mat-card>
+    <div id="header-wrapper">
+        <h3 id="header-title">Company</h3>
+        <div *ngIf="addForm">
+            <div class="addBtn">
+                <button (click)="add()" class="ng-theme" mat-mini-fab>
+                    <mat-icon matTooltip="Add">add</mat-icon>
+                </button>
+            </div>
+            <div>
+                <mat-form-field id="search-box">
+                    <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="edit(form.value)" *ngIf="!addForm">
+        <mat-card-content>
+            <div class="example-container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="this.companyService.disableText" formControlName="name" matInput
+                                   placeholder="Name" maxlength="50" autocomplete="off" required>
+                            <mat-error *ngIf="form.get('name').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="this.companyService.disableText" formControlName="phone" matInput
+                                   maxlength="20" placeholder="Mobile number" autocomplete="off" required>
+                            <mat-error *ngIf="form.get('phone').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('phone').errors?.required && form.get('phone').errors?.invalidNumber">
+                                {{this.commonService.numericValue}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="this.companyService.disableText" formControlName="email" matInput
+                                   placeholder="Email" maxlength="25" autocomplete="off" required>
+                            <mat-error *ngIf="form.get('email').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="form.get('email').errors?.email">
+                                {{this.commonService.emailValid}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="this.companyService.disableText" formControlName="city" matInput
+                                   placeholder="City" maxlength="20" autocomplete="off" required>
+                            <mat-error *ngIf="form.get('city').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('city').errors?.required && form.get('city').errors?.invalidAlpha">
+                                {{this.commonService.alphabet}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <textarea [readonly]="this.companyService.disableText" formControlName="street" matInput
+                                      placeholder="Address" maxlength="300" autocomplete="off" rows="1" required></textarea>
+                            <mat-error *ngIf="form.get('street').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="this.companyService.disableText" formControlName="state" matInput
+                                   placeholder="State" maxlength="20" autocomplete="off" required>
+                            <mat-error *ngIf="form.get('state').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('state').errors?.required && form.get('state').errors?.invalidAlpha">
+                                {{this.commonService.alphabet}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [formControl]="groupControl" autocomplete="off" [matAutocomplete]= 'auto' [readonly] = "companyService.disableText" aria-label="Assignee" matInput
+                                   placeholder="Country"
+                                   type="text">
+                            <mat-autocomplete #auto="matAutocomplete"
+                                              [displayWith]="displayFn" (optionSelected)="selectVal($event.option.value)">
+                                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                                    {{option.name}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input matInput placeholder="Zip code" formControlName="zipCode" autocomplete="off" required
+                                   [readonly]="this.companyService.disableText" maxlength="6">
+                            <mat-error *ngIf="form.get('zipCode').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input matInput placeholder="Telephone number" formControlName="telephoneNo" autocomplete="off" required maxlength="20"
+                                   [readonly]="this.companyService.disableText">
+                            <mat-error *ngIf="form.get('telephoneNo').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error
+                                    *ngIf="!form.get('telephoneNo').errors?.required && form.get('telephoneNo').errors?.invalidNumber">
+                                {{this.commonService.numericValue}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input matInput placeholder="Currency" formControlName="defaultCurrency" autocomplete="off" maxlength="3" required
+                                   [readonly]="this.companyService.disableText">
+                            <mat-error *ngIf="form.get('defaultCurrency').errors?.required">
+                                {{this.commonService.required}} <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="!form.get('defaultCurrency').errors?.required && form.get('defaultCurrency').errors?.invalidAlpha">
+                                {{this.commonService.alphabet}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="example-button-row" align="end">
+                <button mat-raised-button color="default" (click)="back()">Back</button>
+                <button mat-raised-button color="primary" *ngIf="!this.companyService.disableText" [disabled]="!form.valid">{{btnSubmit}}</button>
+            </div>
+        </mat-card-content>
+    </form>
+    <mat-card-content *ngIf="addForm">
+
+        <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" matSort>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="country">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Country</th>
+                    <td mat-cell *matCellDef="let row"> {{row.country}} </td>
+                </ng-container>
+
+                <!-- Org Column -->
+                <ng-container matColumnDef="org">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>More details</th>
+                    <td mat-cell *matCellDef="let row">
+                        <button (click)="addOrganization(row.id, row.name)" color="primary" mat-button>Organization
+                        </button>
+                    </td>
+                </ng-container>
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
+                    <td *matCellDef="let row" class="action-column" mat-cell>
+                        <button (click)="update(row.id)" class="round-back edit-button" mat-button>
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button (click)="view(row.id)" class="round-back view-button" mat-button>
+                            <mat-icon>pageview</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                </tr>
+            </table>
+        </div>
+    </mat-card-content>
+</mat-card>
+
+
+

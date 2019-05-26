@@ -1,0 +1,8 @@
+<mat-form-field>
+    <mat-select placeholder="Select Organization"  [(ngModel)]="selectedValue">
+        <mat-option *ngFor="let org of organization" value="{{org.id}}">{{org.name}}</mat-option>
+    </mat-select>
+</mat-form-field>
+<div class="example-button-row " align="end">
+    <button mat-raised-button color="warn" (click)="go()">Go</button>
+</div>

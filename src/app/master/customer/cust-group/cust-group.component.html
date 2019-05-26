@@ -1,0 +1,170 @@
+<mat-card>
+  <mat-card-content *ngIf='addForm'>
+    <mat-card-title>Customer Profile</mat-card-title>
+    <button class="addBtn" mat-mini-fab (click)="add()">
+      <mat-icon matTooltip="Add">add</mat-icon>
+    </button>
+
+
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Customer Search">
+    </mat-form-field>
+
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort>
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="grpid">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Group ID</th>
+          <td mat-cell *matCellDef="let row"> {{row.grpid}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Group Name</th>
+          <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+          <td mat-cell *matCellDef="let row"> {{row.title}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cntpersn">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Contact Person</th>
+          <td mat-cell *matCellDef="let row"> {{row.cntpersn}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tele">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Telephone No</th>
+          <td mat-cell *matCellDef="let row"> {{row.tele}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fax">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fax No</th>
+          <td mat-cell *matCellDef="let row"> {{row.fax}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Email ID</th>
+          <td mat-cell *matCellDef="let row"> {{row.email}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let row"> {{row.status}} </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
+          <td *matCellDef="let row" class="action-column" mat-cell>
+            <button (click)="update(row.id)" class="round-back edit-button" mat-button>
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button (click)="view(row.id)" class="round-back view-button" mat-button>
+              <mat-icon>pageview</mat-icon>
+            </button>
+            <button (click)="delete(row.id)" class="round-back delete-button" mat-button>
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+        </tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[3, 5, 10, 25, 100]"></mat-paginator>
+    </div>
+  </mat-card-content>
+
+  <form [formGroup]="form" *ngIf="!addForm" (ngSubmit)="edit(form.value)">
+    <mat-card-content>
+      <mat-card-title>CUSTOMER PROFILE</mat-card-title>
+      <div class="example-container">
+        <div class="row">
+          <div class="col-md-4">
+            <mat-form-field>
+              <input [readonly]="customerService.disableText" matInput placeholder="Group ID" formControlName="grpid" required>
+              <mat-error *ngIf="form.get('grpid').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <input [readonly]="customerService.disableText" matInput placeholder="Group Name" formControlName="name" required>
+              <mat-error *ngIf="form.get('name').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <input [readonly]="customerService.disableText" matInput placeholder="Title" formControlName="title" required>
+              <mat-error *ngIf="form.get('title').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <input [readonly]="customerService.disableText" matInput placeholder="Contact Person" formControlName="cntpersn" required>
+              <mat-error *ngIf="form.get('cntpersn').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <input [readonly]="customerService.disableText" matInput placeholder="Telephone No" formControlName="tele" required>
+              <mat-error *ngIf="form.get('tele').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="!form.get('tele').errors?.required && form.get('tele').errors?.invalidNumber">
+                {{this.commonService.numericValue}}
+            </mat-error>
+            <mat-error
+                    *ngIf="!form.get('tele').errors?.invalidNumber && form.get('tele').errors?.minlength">
+                Please enter 10 digit phone number
+            </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <input [readonly]="customerService.disableText" matInput placeholder="Fax No" formControlName="fax" required>
+              <mat-error *ngIf="form.get('fax').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <input [readonly]="customerService.disableText" matInput placeholder="Email ID" formControlName="email" required>
+              <mat-error *ngIf="form.get('email').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.get('email').errors?.email">
+                {{this.commonService.emailValid}}
+            </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <input [readonly]="customerService.disableText" matInput placeholder="Status" formControlName="status" required>
+              <mat-error *ngIf="form.get('status').errors?.required">
+                {{this.commonService.required}} <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <div align="end" class="example-button-row">
+      <button (click)="back()" color="default" mat-raised-button>Back</button>
+      <button *ngIf="!commonService.disableText" [disabled]="!form.valid" color="primary" mat-raised-button>{{btnSubmit}}</button>
+  </div>
+  </form>
+</mat-card>

@@ -1,0 +1,101 @@
+<mat-card>
+    <div id="header-wrapper">
+        <h3 id="header-title">Port</h3>
+        <div>
+            <button (click)="add()" class="ng-theme addBtn" mat-mini-fab>
+                <mat-icon matTooltip="Add">add</mat-icon>
+            </button>
+            <div>
+                <mat-form-field id="search-box">
+                    <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card-content>
+        <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" matSort>
+
+                <!-- Description Column -->
+                <ng-container matColumnDef="desc">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                    <td mat-cell *matCellDef="let row"> {{row.description}} </td>
+                </ng-container>
+
+                <!-- ISO Column -->
+                <ng-container matColumnDef="iso">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
+                    <td mat-cell *matCellDef="let row"> {{row.isoPortCode}} </td>
+                </ng-container>
+
+                <!-- State Column -->
+                <ng-container matColumnDef="state">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
+                    <td mat-cell *matCellDef="let row">{{row.state}} </td>
+                </ng-container>
+
+                <!-- Postal Column -->
+                <ng-container matColumnDef="postal">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Postal</th>
+                    <td mat-cell *matCellDef="let row">{{row.postalCode}} </td>
+                </ng-container>
+
+                <!-- Email Column -->
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+                    <td mat-cell *matCellDef="let row">{{row.email}} </td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                    <td *matCellDef="let row" [ngClass]="row.status === 'ACTIVE' ? 'active' : 'inactive'"
+                        mat-cell>
+                        {{row.status | uppercase}}
+                    </td>
+                </ng-container>
+
+                <!-- Add Birth Column -->
+                <ng-container matColumnDef="add_birth">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>More details</th>
+                    <td mat-cell *matCellDef="let row">
+                        <button mat-icon-button [matMenuTriggerFor]="menu">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="addBirth(row.id, row.isoPortCode)" >
+                                <span>Berth</span>
+                            </button>
+                            <button (click)="addTarrif(row.id, row.description)" mat-menu-item>
+                                <span>Tariff</span>
+                            </button>
+                        </mat-menu>
+                    </td>
+                </ng-container>
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Action</th>
+                    <td *matCellDef="let row" class="action-column" mat-cell>
+                        <button (click)="update(row.id)" class="round-back edit-button" mat-button>
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button (click)="view(row.id)" class="round-back view-button" mat-button>
+                            <mat-icon>pageview</mat-icon>
+                        </button>
+                        <button (click)="delete(row.id)" class="round-back delete-button" mat-button>
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumns;" mat-row>
+                </tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[10, 20, 30]"></mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,687 @@
+<mat-card>
+    <div id="header-wrapper">
+        <button (click)="back_main()" class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <h3 id="header-title">Proforma Disbursement Account</h3>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+
+    <form (ngSubmit)="save(form.value)" [formGroup]="form">
+        <div class="row">
+            <div class="col-md-3">
+                <mat-form-field class="example-full-width">
+                    <input (keyup)="findBranch($event.target.value)" [formControl]="branchCtrl"
+                           [readonly]="createService.viewDisable"
+                           [matAutocomplete]="auto2" aria-label="State" matInput placeholder="Branch" required>
+                    <mat-autocomplete #auto2="matAutocomplete" (optionSelected)="selectValBranch($event.option.value)"
+                                      [displayWith]="displayFnBranch">
+                        <mat-option *ngFor="let state of filteredBranch | async" [value]="state">
+                            {{state.name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+            <div class="col-md-3">
+                <mat-form-field>
+                    <mat-select [disabled]="createService.viewDisable" formControlName="type" placeholder="Type"
+                                required>
+                        <mat-option *ngFor="let key of objectKeys(createService.pdaType)" [value]="key">
+                            {{createService.pdaType[key]}}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <input (keyup)="findCustomer($event.target.value)" [formControl]="customerCtrl"
+                           [readonly]="editPort"
+                           [matAutocomplete]="auto3" aria-label="State" matInput placeholder="Customer" required>
+                    <mat-autocomplete #auto3="matAutocomplete" (optionSelected)="selectValCustomer($event.option.value)"
+                                      [displayWith]="displayFnCustomer">
+                        <mat-option *ngFor="let state of filteredCustomer | async" [value]="state">
+                            {{state.name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field>
+                    <input [disabled]="createService.viewDisable" [matDatepicker]="picker" formControlName="enquiry"
+                           matInput placeholder="Enquiry" required>
+                    <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field>
+                    <input [readonly]="createService.viewDisable" formControlName="enquiryTime" matInput
+                           placeholder="Time" required type="time">
+                </mat-form-field>
+            </div>
+            <div class="col-md-3">
+                <mat-form-field class="example-full-width">
+                    <input (keyup)="findPort($event.target.value)" [formControl]="portCtrl"
+                           [readonly]="editPort"
+                           [matAutocomplete]="auto1" aria-label="State" matInput placeholder="Port" required>
+                    <mat-autocomplete #auto1="matAutocomplete" (optionSelected)="selectValPort($event.option.value)"
+                                      [displayWith]="displayFnPort">
+                        <mat-option *ngFor="let state of filteredPort | async" [value]="state">
+                            {{state.description}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+            <div class="col-md-3">
+                <mat-form-field>
+                    <mat-select [disabled]="createService.viewDisable" formControlName="berth"
+                                placeholder="Berth">
+                        <mat-option *ngFor="let key of arrBerthList" [value]="key.id">
+                            {{key.code}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-3">
+                <mat-form-field>
+                    <mat-select [disabled]="createService.viewDisable" formControlName="orgCurrency"
+                                placeholder="Currency" required>
+                        <mat-option *ngFor="let key of objectKeys(createService.currency)" [value]="key">
+                            {{createService.currency[key]}}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field>
+                    <mat-select [disabled]="createService.viewDisable" formControlName="bank" placeholder="Bank"
+                                required>
+                        <mat-option *ngFor="let key of objectKeys(createService.bankName)" value="{{key}}">
+                            {{createService.bankName[key]}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field>
+                    <input matInput placeholder="Balance" [readonly]="true" formControlName="balance">
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field>
+                    <mat-select (selectionChange)="pdaStatusChange($event.value)"
+                                [disabled]="createService.pdaStatusView"
+                                formControlName="pdaStatus" placeholder="PDA Status" required>
+                        <mat-option *ngFor="let key of objectKeys(createService.pdaStatus)" [value]="key">
+                            {{createService.pdaStatus[key]}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <input (keyup)="findVessel($event.target.value)" [formControl]="vesselCtrl"
+                           [matAutocomplete]="auto8" [readOnly]="createService.viewDisable"
+                           aria-label="State" autocomplete="off" matInput placeholder="Vessel" required>
+                    <mat-autocomplete #auto8="matAutocomplete" (optionSelected)="selectValVessel($event.option.value)"
+                                      [displayWith]="displayFnVessel">
+                        <mat-option *ngFor="let state of filteredVessel | async" [value]="state">
+                            {{state.name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <input [formControl]="vesselFlagCtrl" [matAutocomplete]="auto"
+                           [readonly]="vesselSelect" aria-label="State" autocomplete="off" matInput
+                           placeholder="Vessel Flag" required>
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectVal($event.option.value)"
+                                      [displayWith]="displayFn">
+                        <mat-option *ngFor="let state of filteredStates | async" [value]="state">
+                            {{state.name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <mat-select [disabled]="vesselSelect" formControlName="vesselType" placeholder="Vessel Type">
+                        <mat-option *ngFor="let p of this.arrDataLookup"
+                                    [value]='p.code'>{{p.value}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <mat-select [disabled]="vesselSelect" formControlName="vesselTrade" placeholder="Trade" required>
+                        <mat-option *ngFor="let key of objectKeys(createService.vesselTrade)" [value]="key">
+                            {{createService.vesselTrade[key]}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <input (change)="setUpdatePDAService($event.target.value, 'GRT')"
+                           (keyup)="setUpdatePDAServiceOnKeyup($event.target.value, 'GRT')"
+                           (keypress)="this.commonService.onlyNumber($event)"
+                           [readonly]="vesselSelect" formControlName="grt" matInput maxlength="6"
+                           placeholder="GRT" required>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <input (change)="setUpdatePDAService($event.target.value, 'NRT')"
+                           (keypress)="this.commonService.onlyNumber($event)"
+                           (keyup)="setUpdatePDAServiceOnKeyup($event.target.value, 'NRT')"
+                           [readonly]="vesselSelect" formControlName="nrt" matInput maxlength="6"
+                           placeholder="NRT" required>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <input (change)="setUpdatePDAService($event.target.value, 'RGRT')"
+                           (keypress)="this.commonService.onlyNumber($event)"
+                           (keyup)="setUpdatePDAServiceOnKeyup($event.target.value, 'RGRT')"
+                           [readonly]="vesselSelect" formControlName="rgt" matInput maxlength="6"
+                           placeholder="RGRT">
+                </mat-form-field>
+            </div>
+            <div *ngIf="imoMandatory" class="col-md-2">
+                <mat-form-field class="example-full-width">
+                    <input (keypress)="this.commonService.onlyNumber($event)" [readonly]="vesselSelect"
+                           formControlName="imo" matInput maxlength="7" placeholder="IMO">
+                </mat-form-field>
+            </div>
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <mat-form-field>
+                            <input [disabled]="createService.viewDisable" [matDatepicker]="picker2"
+                                   formControlName="eta" matInput
+                                   placeholder="ETA"
+                                   required>
+                            <mat-datepicker-toggle [for]="picker2" matSuffix></mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="etaTime" matInput
+                                   placeholder="ETA Time" required type="time"/>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <mat-form-field>
+                    <input (keypress)="commonService.onlyDecimalNumber($event)"
+                           (change)="setUpdatePDAService($event.target.value, 'DAY')"
+                           (keyup)="setUpdatePDAServiceOnKeyup($event.target.value, 'DAY')"
+                           [readonly]="createService.viewDisable" formControlName="hour" matInput
+                           maxlength="3" placeholder="Duration" required/>
+                </mat-form-field>
+            </div>
+            <div class="col-md-2">
+                <mat-form-field>
+                    <mat-select [disabled]="createService.viewDisable" formControlName="duration"
+                                placeholder="Hour/Day" required>
+                        <mat-option *ngFor="let key of objectKeys(createService.durationUom)" [value]="key">
+                            {{createService.durationUom[key]}}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+            </div>
+          <div class="col-md-2">
+            <mat-checkbox (change)="checkBothCurrency(isBothCurrency)" class="example-margin" value="isBothCurrency"
+                          style="margin-top: 15px" formControlName="bothCurrency">
+              Send Both Currency
+            </mat-checkbox>
+          </div>
+        </div>
+        <hr>
+        <mat-accordion>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <h3>Additional Info</h3>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <input matInput placeholder="PDA No" [readonly]="true" formControlName="pdaNo"/>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <input [matDatepicker]="picker3" [min]="currentDate" matInput
+                                   [disabled]="createService.viewDisable" formControlName="pdaDate"
+                                   placeholder="PDA Date">
+                            <mat-datepicker-toggle [for]="picker3" matSuffix></mat-datepicker-toggle>
+                            <mat-datepicker #picker3></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="jobNo" matInput
+                                   maxlength="6" placeholder="Job Ref"/>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="roe" formGroupName="roe"
+                                   matInput maxlength="7" placeholder="ROE"/>
+                            <mat-error *ngIf="form.get('roe').errors?.roeNumber">
+                                Please enter maximum to 4 decimal number Ex. 22.1122
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="voyage" matInput
+                                   maxlength="11" placeholder="Voyage"/>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-md-2">
+                        <mat-form-field class="example-full-width">
+                            <input (keyup)="findNextPort($event.target.value)" [formControl]="nextPortCtrl"
+                                   [readonly]="createService.viewDisable"
+                                   [matAutocomplete]="auto4" aria-label="State" matInput placeholder="Next Port">
+                            <mat-autocomplete #auto4="matAutocomplete" (optionSelected)="selectValNextPort($event.option.value)"
+                                              [displayWith]="displayFnNextPort">
+                                <mat-option *ngFor="let state of filteredNextport | async" [value]="state">
+                                    {{state.isoPortCode}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field class="lbpMM">
+                            <input [readonly]="createService.viewDisable" formControlName="lengthLbp" matInput
+                                   maxlength="8" placeholder="Length(PBL)"/>
+                            <span class="lbp">MM</span>
+                            <mat-error *ngIf="form.get('lengthLbp').errors?.beamNumber">
+                                Please enter valid number Ex. 12345.20
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="loadCargo" matInput
+                                   maxlength="50" placeholder="Load Cargo">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="quantity" matInput
+                                   placeholder="Qty"/>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="dischargeCargo" matInput
+                                   maxlength="50" placeholder="Discharge Cargo">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="dischargeQty" matInput
+                                   placeholder="Discharge Qty"/>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field class="example-full-width">
+                            <input (keyup)="findLastPort($event.target.value)" [formControl]="lastPortCtrl"
+                                   [readonly]="createService.viewDisable"
+                                   [matAutocomplete]="auto5" aria-label="State" matInput placeholder="Last Port">
+                            <mat-autocomplete #auto5="matAutocomplete" (optionSelected)="selectValLastPort($event.option.value)"
+                                              [displayWith]="displayFnLastPort">
+                                <mat-option *ngFor="let state of filteredLastPort | async" [value]="state">
+                                    {{state.isoPortCode}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                        <mat-form-field class="lbpMM">
+                            <input [readonly]="createService.viewDisable" formControlName="lengthLoa" matInput
+                                   maxlength="8" placeholder="Length(LOA)"/>
+                            <span class="lbp">MM</span>
+                            <mat-error *ngIf="form.get('lengthLoa').errors?.beamNumber">
+                                Please enter valid number Ex. 12345.20
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <mat-select [disabled]="createService.viewDisable" formControlName="operation"
+                                        placeholder="Operation">
+                                <mat-option *ngFor="let key of objectKeys(createService.operation)" [value]="key">
+                                    {{createService.operation[key]}}
+                                </mat-option>
+
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="beam" matInput
+                                   (keypress)="commonService.onlyDecimalNumber($event)" maxlength="8"
+                                   placeholder="Beam"/>
+                            <mat-error *ngIf="form.get('beam').errors?.beamNumber">
+                                Please enter valid number Ex. 12345.20
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-md-3">
+                        <mat-form-field class="example-full-width">
+                            <input (keyup)="findDischargePort($event.target.value)" [formControl]="dischargePortCtrl"
+                                   [readonly]="createService.viewDisable"
+                                   [matAutocomplete]="auto6" aria-label="State" matInput placeholder="Discharge Port">
+                            <mat-autocomplete #auto6="matAutocomplete" (optionSelected)="selectValDischargeport($event.option.value)"
+                                              [displayWith]="displayFnDischargePort">
+                                <mat-option *ngFor="let state of filteredDischargePort | async" [value]="state">
+                                    {{state.isoPortCode}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field class="example-full-width">
+                            <input (keyup)="findLoadPort($event.target.value)" [formControl]="loadPortCtrl"
+                                   [readonly]="createService.viewDisable"
+                                   [matAutocomplete]="auto7" aria-label="State" matInput placeholder="Load Port">
+                            <mat-autocomplete #auto7="matAutocomplete" (optionSelected)="selectValLoadPort($event.option.value)"
+                                              [displayWith]="displayFnLoadPort">
+                                <mat-option *ngFor="let state of filteredLoadPort | async" [value]="state">
+                                    {{state.isoPortCode}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field>
+                            <input [readonly]="createService.viewDisable" formControlName="cargo" matInput
+                                   maxlength="50" placeholder="Cargo">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field>
+                            <textarea [readonly]="createService.viewDisable" formControlName="activityPurpose" matInput
+                                      placeholder="Activity Purpose"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+        <div class="row">
+            <div class="col-12">
+                <div *ngIf="!createService.pdaStatusBasedEnableDisable" align="end" class="example-button-row">
+                    <button (click)="senForApproval()" *ngIf="createService.sendForApproval" color="primary"
+                            mat-raised-button type="button">Send for Approval
+                    </button>
+                    <button (click)="pdaStatusApprove()" *ngIf="createService.approved" color="primary"
+                            mat-raised-button type="button">Approve
+                    </button>&nbsp;
+                    <button (click)="pdaStatusAmmend()" *ngIf="createService.ammend" color="primary"
+                            mat-raised-button type="button">Amend
+                    </button>
+                    <button (click)="sendToCustomer()" *ngIf="createService.sendToCustomer" color="primary"
+                            mat-raised-button type="button">Send to Customer
+                    </button>&nbsp;
+                    <button (click)="generatePDF()" *ngIf="createService.generatePDF" color="primary" mat-button
+                            mat-raised-button
+                            type="button">
+                        View PDF
+                    </button>
+                </div>
+            </div>
+            <div class="col-12">
+                <div *ngIf="createService.pdaStatusBasedEnableDisable" align="end" class="example-button-row">
+                    <button *ngIf="!createService.save" [disabled]="!form.valid" color="primary" mat-raised-button
+                            type="submit">Save
+                    </button>&nbsp;&nbsp;
+                    <button (click)="fetchTarif()" [disabled]="!createService.fetchTariff" color="primary" mat-button
+                            mat-raised-button
+                            type="button">
+                        Fetch Tariff
+                    </button>&nbsp;
+                    <button (click)="submit()" [disabled]="!createService.submit" color="primary" mat-button
+                            mat-raised-button
+                            type="button">Save Tariff
+                    </button>&nbsp;
+                </div>
+            </div>
+        </div>
+        <!--<button (click)="sendMailFun()" *ngIf="sendMail" color="primary" mat-button mat-raised-button-->
+        <!--type="button">-->
+        <!--Send Mail-->
+        <!--</button>-->
+
+    </form>
+    <hr>
+    <div class="row" *ngIf="addTerrif">
+        <div class="col-md-12">
+            <h6><b>PARAMETERS | EXPENSES</b></h6>
+        </div>
+        <div class="col-md-12">
+            <br><br>
+            <form [formGroup]="tarrifForm">
+                <!--<table>-->
+
+                <table formArrayName="tarrifItems">
+                    <thead>
+                    <tr>
+                        <th style="width: 6vh"></th>
+                        <th style="width: 30vh">Service Code</th>
+                        <th style="width: 13vh;">Calculation Type</th>
+                        <th style="width: 13vh;">Charge Basis</th>
+                        <th style="width: 11vh;">UOM</th>
+                        <th style="width: 11vh;">Weight</th>
+                        <th style="width: 11vh;">Time</th>
+                        <th class="currency" style="width: 11vh">Currency</th>
+                        <th style="width: 9vh;">Rate</th>
+                        <th style="width: 11vh">Amount</th>
+                        <th style="width: 8vh">GST %</th>
+                        <th style="width: 11vh">GST</th>
+                        <th style="width: 6vh;">ROE</th>
+                        <th style="width: 11vh">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let orderItem of getControls(); let i = index" [formGroupName]="i">
+                        <input formControlName="id" type="hidden">
+                        <td style="width: 6vh;">
+                            <mat-checkbox (change)="deleteChangeEvent(tarrifForm.value.tarrifItems[i].id, i, $event)"
+                                          *ngIf="tarrifForm.value.tarrifItems[i].id > 0"
+                                          [disabled]="createService.viewDisable" formControlName="check"></mat-checkbox>
+                            <span (click)="removeOrderItem(i)" *ngIf="tarrifForm.value.tarrifItems[i].id === null"
+                                  class="labelRemove">Remove</span>
+                        </td>
+                        <td style="width: 30vh">
+                            <mat-form-field>
+                                <input (keyup)="findServiceCode($event.target.value)" [matAutocomplete]="autoName"
+                                       [value]="serviceCodeCtrl" formControlName="itemName" matInput
+                                       [readonly]="createService.viewDisable" style="width: 70vh"/>
+                            </mat-form-field>
+                                <mat-autocomplete #autoName="matAutocomplete"
+                                                  (optionSelected)="selectValServiceCode($event.option.value, i)"
+                                                  [displayWith]="displayFnServiceCode">
+                                    <mat-option *ngFor="let option of filteredServiceCode | async" [value]="option">
+                                        {{option.description}} {{(option.vendorName) ? ' (' + option.vendorName + ')' : ''}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                        </td>
+                        <td style="width: 13vh;">
+                            <mat-form-field>
+                                <mat-select [disabled]="createService.viewDisable" formControlName="calculationType">
+                                    <mat-option *ngFor="let c of this.tarrifService.calculationType" [value]="c.code">
+                                        {{c.value}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 13vh;">
+                            <mat-form-field>
+                                <mat-select [disabled]="createService.viewDisable" formControlName="chargeBasis">
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].calculationType == 'LS'"
+                                                value="LS">LS
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].calculationType == 'FLAT'"
+                                                value="WEIGHT">
+                                        WEIGHT
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].calculationType == 'FLAT'"
+                                                value="TIME">
+                                        TIME
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].calculationType == 'SINGLE_BAND'"
+                                                value="WEIGHT">WEIGHT
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].calculationType == 'SINGLE_BAND'"
+                                                value="TIME">TIME
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].calculationType == 'DOUBLE_BAND'"
+                                                value="WEIGHT~TIME">WEIGHT~TIME
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 11vh;">
+                            <mat-form-field>
+                                <mat-select
+                                        (selectionChange)="serviceCalculationChange($event.value, i, tarrifForm.value.tarrifItems[i])"
+                                        [disabled]="createService.viewDisable" formControlName="uom">
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'LS'"
+                                                value="FIXED">FIXED
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT'"
+                                                value="NRT">NRT
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT'"
+                                                value="GRT">GRT
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT'"
+                                                value="RGRT">
+                                        RGRT
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'TIME'"
+                                                value="HOUR">HOUR
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'TIME'"
+                                                value="DAY">DAY
+                                    </mat-option>
+
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="NRT~HOUR">NRT~HOUR
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="NRT~DAY">NRT~DAY
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="GRT~HOUR">GRT~HOUR
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="GRT~DAY">GRT~DAY
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="RGRT~HOUR">RGRT~HOUR
+                                    </mat-option>
+                                    <mat-option *ngIf="tarrifForm.value.tarrifItems[i].chargeBasis == 'WEIGHT~TIME'"
+                                                value="RGRT~DAY">RGRT~DAY
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 11vh;">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                       (keyup)="qtyEnter($event.target.value, tarrifForm.value.tarrifItems[i], i)"
+                                       [readonly]="createService.viewDisable" formControlName="weight" matInput>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 11vh;">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                       (keyup)="qtyEnter($event.target.value, tarrifForm.value.tarrifItems[i], i)"
+                                       [readonly]="createService.viewDisable" formControlName="height" matInput>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 11vh">
+                            <mat-form-field>
+                                <mat-select formControlName="currency"
+                                            [disabled]="createService.viewDisable" placeholder="Currency" required>
+                                    <mat-option *ngFor="let key of objectKeys(createService.currency)" [value]="key">
+                                        {{createService.currency[key]}}
+                                    </mat-option>
+
+                                </mat-select>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 9vh;">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                       (keyup)="rateEnter($event.target.value, tarrifForm.value.tarrifItems[i], i)"
+                                       [readonly]="createService.viewDisable" formControlName="rate" matInput/>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 11vh">
+                            <mat-form-field>
+                                <input formControlName="amount" matInput readonly/>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 6vh;">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                       (keyup)="gstEnter($event.target.value, tarrifForm.value.tarrifItems[i], i)"
+                                       [readonly]="createService.viewDisable" formControlName="gst" matInput/>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 11vh">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)" formControlName="gstAmount"
+                                       matInput readonly/>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 6vh;">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                       (keyup)="roeEnter($event.target.value, tarrifForm.value.tarrifItems[i], i)"
+                                       [readonly]="createService.viewDisable" formControlName="roe" matInput/>
+                            </mat-form-field>
+                        </td>
+                        <td style="width: 11vh">
+                            <mat-form-field>
+                                <input (keypress)="commonService.onlyDecimalNumber($event)" formControlName="total"
+                                       matInput readonly/>
+                            </mat-form-field>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <!--</table>-->
+                </table>
+            </form>
+            <br>
+            <button (click)="onAddItem()" [disabled]="addMoreService || createService.viewDisable" color="primary"
+                    mat-raised-button>Add new
+            </button>&nbsp;&nbsp;
+            <button (click)="deleteAll()" [disabled]="deleteButton" color="warn" mat-raised-button>Delete All</button>
+            <!--<pre>{{tarrifForm.value | json}}</pre>-->
+        </div>
+    </div>
+</mat-card>
+

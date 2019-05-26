@@ -1,0 +1,352 @@
+<mat-card>
+    <div id="header-wrapper">
+        <button (click)="back_main()" class="ng-theme backMasterButton" mat-mini-fab>
+            <mat-icon matTooltip="Back">arrow_back</mat-icon>
+        </button>
+        <h3 id="header-title">Tarrif Details</h3>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <mat-card>
+        <div class="row">
+            <div class="col-md-3"><b>Calculation Type:</b> {{tarrifService.tarrifHeaderDetails.calculationType}}</div>
+            <div class="col-md-3"><b>Charge Basis:</b> {{tarrifService.tarrifHeaderDetails.chargeBasis}}</div>
+            <div class="col-md-3"><b>UOM:</b> {{tarrifService.tarrifHeaderDetails.uom}}</div>
+        </div>
+    </mat-card>
+    <div class="row">
+        <div class="col-md-12">
+            <mat-tab-group (selectedTabChange)="tab($event)" class="tarrifMaster">
+                <mat-tab label="FOREIGN">
+                    <form (ngSubmit)="save()" [formGroup]="myForm">
+                        <!--<table>-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="currency mat-table dynamic-table" formArrayName="currency">
+                                    <tr>
+                                        <th>Currency</th>
+                                        <th>Min Charge</th>
+                                        <th>Rebate Application</th>
+                                        <th>Rebate (%)</th>
+                                        <th>Effective From - To Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    <tr *ngFor="let comp of getMyFormCurrencyControls(); let i=index"
+                                        [formGroupName]="i"
+                                        [ngClass]="[myForm.value.currency[i].class ? 'dynamic-row' : '', selectTR === i ? 'backGroundTD' : '']">
+                                        <input formControlName="isForeign" type="hidden">
+                                        <td>
+                                            <mat-form-field class="fetchTarif">
+                                                <mat-select
+                                                        (selectionChange)="tarrifService.setMinDate($event.value, 1, myForm.value.currency)"
+                                                        formControlName="currency">
+                                                    <mat-option>Select</mat-option>
+                                                    <mat-option *ngFor="let c of arrCurrency.CURRENCY"
+                                                                [value]="c.code">{{c.value}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <mat-form-field class="fetchTarif">
+                                                <input (keypress)="validateNumber($event)" formControlName="minCharge"
+                                                       matInput maxlength="10">
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <mat-slide-toggle class="example-margin"
+                                                              formControlName="applicable"></mat-slide-toggle>
+                                        </td>
+                                        <td>
+                                            <!--{{myForm.value.currency[i].applicable | json}}-->
+                                            <mat-form-field class="fetchTarif">
+                                                <input (keypress)="validateNumber($event)"
+                                                       [ngClass]="myForm.value.currency[i].applicable ? '' : 'disable_percentage'"
+                                                       [value]="(myForm.value.currency[i].applicable === true) ? myForm.value.currency[i].rebatePercent : '0'"
+                                                       formControlName="rebatePercent" matInput maxlength="10">
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <mat-form-field>
+                                                <input [min]="tarrifService.foreignMinDate[i]" [satDatepicker]="picker2"
+                                                       formControlName="date" matInput
+                                                       placeholder="Choose a date">
+                                                <sat-datepicker #picker2 [rangeMode]="true">
+                                                </sat-datepicker>
+                                                <sat-datepicker-toggle [for]="picker2"
+                                                                       matSuffix></sat-datepicker-toggle>
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <label (click)="getSingleBandData(i)">Select</label>
+                                        </td>
+                                    </tr>
+                                    <!--<pre>{{myForm.value.currency | json}}</pre>-->
+                                    <!--</table>-->
+                                </table>
+                                <br>
+                                <button (click)="addNewCurrency()" *ngIf="currencyMinLength < currencyMaxLength"
+                                        color="primary"
+                                        mat-raised-button type="button">Add new
+                                </button>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div *ngIf="currencyForm">
+                                    <table border="1" formArrayName="singleBand" width="600">
+                                        <tr>
+                                            <th>UOM</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        <tr *ngFor="let comp of getMyFormSingleBandControl(); let i=index"
+                                            [formGroupName]="i"
+                                            [ngClass]="[(selectTRSub === i) ? 'backGroundTD' : '', myForm.value.singleBand[i].class ? 'dynamic-row' : '']">
+                                            <td>{{myForm.value.singleBand[i].uom}}</td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)"
+                                                           formControlName="timeFrom"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)" formControlName="timeTo"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                            <td>
+                                                <label (click)="getRateForm(i, myForm.value.singleBand[i].calculationTypeID)">select</label>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                    <div style="margin-top: 16px;">
+                                        <button (click)="addNewTime()" *ngIf="weightMinlength < weightMaxlength"
+                                                color="primary" mat-raised-button
+                                                type="button">Add new
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div *ngIf="weightForm">
+                                    <table border="1" formArrayName="doubleBand" width="600">
+                                        <tr>
+                                            <th>UOM</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Rate</th>
+                                        </tr>
+                                        <tr *ngFor="let comp of getMyFormDoubleBandControl(); let i=index"
+                                            [formGroupName]="i"
+                                            [ngClass]="[myForm.value.doubleBand[i].class ? 'dynamic-row' : '']">
+                                            <td>{{myForm.value.doubleBand[i].uom}}</td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)"
+                                                           formControlName="weightFrom"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)"
+                                                           formControlName="weightTo"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)" formControlName="rate"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                    <div style="margin-top: 16px; margin-bottom: 10px;">
+                                        <button (click)="addNewWeight()" color="primary" mat-raised-button
+                                                type="button">Add new
+                                        </button>
+                                        <button class="saveBtn" color="primary" mat-raised-button type="submit">Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </mat-tab>
+                <mat-tab label="COASTAL">
+                    <form (ngSubmit)="saveCoastal()" [formGroup]="coastalForm">
+                        <!--<table>-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="currency" formArrayName="currency">
+                                    <tr>
+                                        <th>Currency</th>
+                                        <th>Min Charge</th>
+                                        <th>Rebate Application</th>
+                                        <th>Rebate (%)</th>
+                                        <th>Effective From - To Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    <tr *ngFor="let comp of getCoastalFormCurrencyControls(); let i=index"
+                                        [formGroupName]="i"
+                                        [ngClass]="[selectTR === i ? 'backGroundTD' : '', coastalForm.value.currency[i].class ? 'dynamic-row' : '']">
+                                        <input formControlName="isForeign" type="hidden">
+                                        <td>
+                                            <mat-form-field class="fetchTarif">
+                                                <mat-select
+                                                        (selectionChange)="tarrifService.setMinDate($event.value, 0, coastalForm.value.currency)"
+                                                        formControlName="currency">
+                                                    <mat-option>Select</mat-option>
+                                                    <mat-option *ngFor="let c of arrCurrency.CURRENCY"
+                                                                [value]="c.code">{{c.value}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <mat-form-field class="fetchTarif">
+                                                <input (keypress)="validateNumber($event)" formControlName="minCharge"
+                                                       matInput maxlength="10">
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <mat-slide-toggle class="example-margin"
+                                                              formControlName="applicable"></mat-slide-toggle>
+                                        </td>
+                                        <td>
+                                            <!--{{myForm.value.currency[i].applicable | json}}-->
+                                            <mat-form-field class="fetchTarif">
+                                                <input (keypress)="validateNumber($event)"
+                                                       [ngClass]="coastalForm.value.currency[i].applicable ? '' : 'disable_percentage'"
+                                                       [value]="(coastalForm.value.currency[i].applicable === true) ? coastalForm.value.currency[i].rebatePercent : '0'"
+                                                       formControlName="rebatePercent" matInput maxlength="10">
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <mat-form-field>
+                                                <input [min]="tarrifService.coastalMinDate[i]" [satDatepicker]="picker2"
+                                                       formControlName="date" matInput
+                                                       placeholder="Choose a date">
+                                                <sat-datepicker #picker2 [rangeMode]="true">
+                                                </sat-datepicker>
+                                                <sat-datepicker-toggle [for]="picker2"
+                                                                       matSuffix></sat-datepicker-toggle>
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <label (click)="getCoastalSingleBandData(i)">Select</label>
+                                        </td>
+                                    </tr>
+                                    <!--<pre>{{myForm.value.currency | json}}</pre>-->
+                                    <!--</table>-->
+                                </table>
+                                <br>
+                                <button (click)="addNewCoastalCurrency()" *ngIf="currencyMinLength < currencyMaxLength"
+                                        color="primary"
+                                        mat-raised-button type="button">Add new
+                                </button>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div *ngIf="currencyForm">
+                                    <table border="1" formArrayName="singleBand" width="600">
+                                        <tr>
+                                            <th>UOM</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        <tr *ngFor="let comp of getCoastalFormSingleBandControl(); let i=index"
+                                            [formGroupName]="i"
+                                            [ngClass]="[selectTRSub === i ? 'backGroundTD' : '', coastalForm.value.singleBand[i].class ? 'dynamic-row' : '']">
+                                            <td>{{coastalForm.value.singleBand[i].uom}}</td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)"
+                                                           formControlName="timeFrom"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)" formControlName="timeTo"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                            <td>
+                                                <label (click)="getCoastalRateForm(i, coastalForm.value.singleBand[i].calculationTypeID)">select</label>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                    <div style="margin-top: 16px;">
+                                        <button (click)="addCoastalNewTime()" *ngIf="weightMinlength < weightMaxlength"
+                                                color="primary" mat-raised-button
+                                                type="button">Add new
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div *ngIf="weightForm">
+                                    <table border="1" formArrayName="doubleBand" width="600">
+                                        <tr>
+                                            <th>UOM</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Rate</th>
+                                        </tr>
+                                        <tr *ngFor="let comp of getCoastalFormDoubleBandControl(); let i=index"
+                                            [formGroupName]="i"
+                                            [ngClass]="[coastalForm.value.doubleBand[i].class ? 'dynamic-row' : '']">
+                                            <!--{{myForm.value.doubleBand[i] | json}}-->
+                                            <td>{{coastalForm.value.doubleBand[i].uom}}</td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)"
+                                                           formControlName="weightFrom"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)"
+                                                           formControlName="weightTo"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <input (keypress)="validateNumber($event)" formControlName="rate"
+                                                           matInput maxlength="10">
+                                                </mat-form-field>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                    <div style="margin-top: 16px; margin-bottom: 10px;">
+                                        <button (click)="addCoastalNewWeight()" color="primary" mat-raised-button
+                                                type="button">Add new
+                                        </button>
+                                        <button class="saveBtn" color="primary" mat-raised-button type="submit">Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+
+</mat-card>
+

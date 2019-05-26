@@ -1,0 +1,57 @@
+<mat-card>
+    <div id="header-wrapper">
+        <h3 id="header-title">BRANCH REQUISITION</h3>
+        <div class="clearfix"></div>
+        <mat-divider></mat-divider>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <mat-form-field>
+                <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Search">
+            </mat-form-field>
+        </div>
+        <div class="col-md-12">
+            <div class="mat-elevation-z8">
+                <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort>
+                    <ng-container matColumnDef="jobNo">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Job No</th>
+                        <td *matCellDef="let element" mat-cell> {{element.jobNo}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="vesselName">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> Vessel</th>
+                        <td *matCellDef="let element" mat-cell> {{element.vesselName}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="portName">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> Port</th>
+                        <td *matCellDef="let element" mat-cell> {{element.portName}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="berthName">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> Berth</th>
+                        <td *matCellDef="let element" mat-cell> {{element.berthName}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="eta">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> ETA</th>
+                        <td *matCellDef="let element" mat-cell> {{element.eta | date: 'dd-MMM, yyyy'}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="ata">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> ATA</th>
+                        <td *matCellDef="let element" mat-cell> {{element.ata}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="cargo">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> Cargo</th>
+                        <td *matCellDef="let element" mat-cell> {{element.cargo}}</td>
+                    </ng-container>
+
+                    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                    <tr (click)="getRecord(row); selectTR = row.id"
+                        *matRowDef="let row; columns: displayedColumns;"
+                        [ngClass]="row.id === selectTR ? 'backColor' : ''" class="rowSelected" mat-row></tr>
+                </table>
+                <mat-paginator [pageSizeOptions]="[3, 5, 10, 15]"></mat-paginator>
+            </div>
+        </div>
+    </div>
+</mat-card>
+<div *ngIf="displayJobDetails">
+    <app-service-details [parentToChildPassing]="objPassing"></app-service-details>
+</div>

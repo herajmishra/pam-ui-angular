@@ -1,0 +1,55 @@
+#header-wrapper {
+  max-width: 99% !important;
+  margin: auto;
+}
+
+#header-title {
+  float: left;
+  /* max-width: 100px; */
+  margin-top: 15px;
+  margin-left: 8vh;
+}
+
+table {
+  //width: 100%;
+  th {
+    padding-left: 26px !important;
+  }
+
+  label {
+    padding-left: 26px;
+    margin-top: 6px;
+    color: blue;
+    cursor: pointer;
+  }
+
+  mat-slide-toggle {
+    padding-left: 32%;
+  }
+}
+
+.fetchTarif {
+  width: 100%;
+}
+
+mat-checkbox {
+  position: absolute;
+  margin-top: -8px;
+}
+
+.saveBtn {
+  position: absolute;
+  margin-left: 55vh;
+}
+
+.disableRebatePer {
+  display: none;
+}
+
+.disable_percentage {
+  visibility: hidden;
+}
+
+.backGroundTD {
+  background-color: #EEE;
+}

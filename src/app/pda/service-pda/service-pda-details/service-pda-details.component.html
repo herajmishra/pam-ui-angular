@@ -1,0 +1,268 @@
+<form [formGroup]="formPDAService">
+    <div class="row">
+        <div class="col-md-12">
+            <table formArrayName="pdaServiceItem">
+                <thead style="margin-left: 10px;text-align: center">
+                <tr>
+                    <th style="width: 3vh"></th>
+                    <th style="width: 15vh">Service Code</th>
+                    <th>Sac Code</th>
+                    <th>Vendor</th>
+                    <th>Calculation Type</th>
+                    <th>Charge Basis</th>
+                    <th>UOM</th>
+                    <th style="width: 8vh;">Weight</th>
+                    <th style="width: 8vh;">Time</th>
+                    <th>Currency</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>GST (%)</th>
+                    <th>GST Amt</th>
+                    <th>ROE</th>
+                    <th>Total Amt</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let orderItem of getControls(); let i = index" [formGroupName]="i">
+
+                    <td style="width: 3vh">
+                        <div *ngIf="!(formPDAService.value.pdaServiceItem[i].status === 'SUBM' ||
+                                    formPDAService.value.pdaServiceItem[i].status === 'APVD')">
+                            <mat-checkbox
+                                    (change)="deleteChangeEvent(formPDAService.value.pdaServiceItem[i].id, i, $event)"
+                                    *ngIf="formPDAService.value.pdaServiceItem[i].id > 0"
+                                    formControlName="check"></mat-checkbox>
+                        </div>
+                        <span (click)="remove(i)" *ngIf="formPDAService.value.pdaServiceItem[i].id === null"
+                              class="close">
+                            <mat-icon>close</mat-icon>
+                        </span>
+                    </td>
+                    <td style="width: 15vh">
+                        <mat-form-field>
+                            <input (keyup)="findServiceCode($event.target.value)" [matAutocomplete]="autoName"
+                                   [readonly]="formPDAService.value.pdaServiceItem[i].editable"
+                                   [value]="serviceCodeCtrl" formControlName="serviceID"
+                                   matInput style="width: 70vh"/>
+                        </mat-form-field>
+                        <mat-autocomplete #autoName="matAutocomplete"
+                                          (optionSelected)="selectValServiceCode($event.option.value, i)"
+                                          [displayWith]="displayFnServiceCode">
+                            <mat-option *ngFor="let option of filteredServiceCode | async" [value]="option">
+                                {{option.description}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input [readonly]="formPDAService.value.pdaServiceItem[i].editable"
+                                   formControlName="sacCode" matInput>
+                        </mat-form-field>
+                    </td>
+                    <td style="text-align: center">
+                        <span>{{formPDAService.value.pdaServiceItem[i].vendorID}}</span>
+                    </td>
+                    <td style="text-align: center">
+                        <mat-form-field>
+                            <mat-select [disabled]="formPDAService.value.pdaServiceItem[i].editable"
+                                        formControlName="calculationType">
+                                <mat-option *ngFor="let c of tarrifService.calculationType" [value]="c.code">
+                                    {{c.value}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                    <td style="text-align: center">
+                        <mat-form-field>
+                            <mat-select [disabled]="formPDAService.value.pdaServiceItem[i].editable"
+                                        formControlName="chargeBasis">
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].calculationType == 'LS'"
+                                            value="LS">LS
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].calculationType == 'FLAT'"
+                                            value="WEIGHT">
+                                    WEIGHT
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].calculationType == 'FLAT'"
+                                            value="TIME">
+                                    TIME
+                                </mat-option>
+                                <mat-option
+                                        *ngIf="formPDAService.value.pdaServiceItem[i].calculationType == 'SINGLE_BAND'"
+                                        value="WEIGHT">WEIGHT
+                                </mat-option>
+                                <mat-option
+                                        *ngIf="formPDAService.value.pdaServiceItem[i].calculationType == 'SINGLE_BAND'"
+                                        value="TIME">TIME
+                                </mat-option>
+                                <mat-option
+                                        *ngIf="formPDAService.value.pdaServiceItem[i].calculationType == 'DOUBLE_BAND'"
+                                        value="WEIGHT~TIME">WEIGHT~TIME
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                    <td style="text-align: center">
+                        <mat-form-field>
+                            <mat-select
+                                    (selectionChange)="serviceCalculationChange($event.value, i, formPDAService.value.pdaServiceItem[i])"
+                                    [disabled]="formPDAService.value.pdaServiceItem[i].editable" formControlName="uom">
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'LS'"
+                                            value="FIXED">FIXED
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT'"
+                                            value="NRT">NRT
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT'"
+                                            value="GRT">GRT
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT'"
+                                            value="RGRT">
+                                    RGRT
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'TIME'"
+                                            value="HOUR">HOUR
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'TIME'"
+                                            value="DAY">DAY
+                                </mat-option>
+
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT~TIME'"
+                                            value="NRT~HOUR">NRT~HOUR
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT~TIME'"
+                                            value="NRT~DAY">NRT~DAY
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT~TIME'"
+                                            value="GRT~HOUR">GRT~HOUR
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT~TIME'"
+                                            value="GRT~DAY">GRT~DAY
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT~TIME'"
+                                            value="RGRT~HOUR">RGRT~HOUR
+                                </mat-option>
+                                <mat-option *ngIf="formPDAService.value.pdaServiceItem[i].chargeBasis == 'WEIGHT~TIME'"
+                                            value="RGRT~DAY">RGRT~DAY
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                    <td style="width: 8vh;">
+                        <mat-form-field>
+                            <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                   (keyup)="updatedFormValues(formPDAService.value.pdaServiceItem[i], i)"
+                                   [readonly]="formPDAService.value.pdaServiceItem[i].editable"
+                                   formControlName="weight" matInput>
+                        </mat-form-field>
+                    </td>
+                    <td style="width: 8vh;">
+                        <mat-form-field>
+                            <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                   (keyup)="updatedFormValues(formPDAService.value.pdaServiceItem[i], i)"
+                                   [readonly]="formPDAService.value.pdaServiceItem[i].editable"
+                                   formControlName="time" matInput>
+                        </mat-form-field>
+                    </td>
+                    <td style="text-align: center">
+                        <mat-form-field>
+                            <mat-select [disabled]="formPDAService.value.pdaServiceItem[i].editable"
+                                        formControlName="currency" required>
+                                <mat-option *ngFor="let key of objectKeys(createService.currency)" [value]="key">
+                                    {{createService.currency[key]}}
+                                </mat-option>
+
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                   (keyup)="updatedFormValues(formPDAService.value.pdaServiceItem[i], i)"
+                                   [readonly]="formPDAService.value.pdaServiceItem[i].editable"
+                                   formControlName="rate" matInput>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input formControlName="amount" matInput readonly>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                   (keyup)="updatedFormValues(formPDAService.value.pdaServiceItem[i], i)"
+                                   [readonly]="formPDAService.value.pdaServiceItem[i].editable"
+                                   formControlName="gst" matInput>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input formControlName="gstAmount" matInput readonly>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input (keypress)="commonService.onlyDecimalNumber($event)"
+                                   [readonly]="formPDAService.value.pdaServiceItem[i].editable" formControlName="roe"
+                                   matInput>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field>
+                            <input formControlName="total" matInput readonly>
+                        </mat-form-field>
+                    </td>
+                    <td style="text-align: center">
+                        <span>{{formPDAService.value.pdaServiceItem[i].status}}</span>
+                    </td>
+                    <td style="text-align: center;">
+                        <!--                        [disabled]="!formPDAService.valid"-->
+                        <button (click)="savePDAService(formPDAService.value.pdaServiceItem[i])"
+                                *ngIf="formPDAService.value.pdaServiceItem[i].groupStatus === null" color="primary"
+                                mat-raised-button type="submit">Save
+                        </button>
+                        <span (click)="sendForApproval(formPDAService.value.pdaServiceItem[i].serviceGroup, 'APRPE')"
+                              *ngIf="formPDAService.value.pdaServiceItem[i].groupStatus === true &&
+                                                    formPDAService.value.pdaServiceItem[i].status === 'DRAFT'"
+                              class="remove">Send For Approval</span>
+                        <span (click)="sendForApproval(formPDAService.value.pdaServiceItem[i].serviceGroup, 'NEEDA')"
+                              *ngIf="formPDAService.value.pdaServiceItem[i].groupStatus === true &&
+                                                    formPDAService.value.pdaServiceItem[i].status === 'AMD'"
+                              class="remove">Send For Approval</span>
+                        <span (click)="sendForApproval(formPDAService.value.pdaServiceItem[i].serviceGroup, 'APVD')"
+                              *ngIf="(formPDAService.value.pdaServiceItem[i].groupStatus === true &&
+                                                    formPDAService.value.pdaServiceItem[i].status === 'APRPE') ||
+                                                     (formPDAService.value.pdaServiceItem[i].groupStatus === true &&
+                                                    formPDAService.value.pdaServiceItem[i].status === 'NEEDA')"
+                              class="remove">Approve</span>
+                        <span (click)="sendForApproval(formPDAService.value.pdaServiceItem[i].serviceGroup, 'AMD')"
+                              *ngIf="(formPDAService.value.pdaServiceItem[i].groupStatus === true &&
+                                                    formPDAService.value.pdaServiceItem[i].status === 'APRPE') ||
+                                                     (formPDAService.value.pdaServiceItem[i].groupStatus === true &&
+                                                    formPDAService.value.pdaServiceItem[i].status === 'NEEDA')"
+                              class="remove"> | Amend</span>
+                        <span (click)="sendForApproval(formPDAService.value.pdaServiceItem[i].serviceGroup, 'SUBM')"
+                              *ngIf="formPDAService.value.pdaServiceItem[i].groupStatus === true &&
+                                                    formPDAService.value.pdaServiceItem[i].status === 'APVD'"
+                              class="remove">Send For Customer</span>
+                        <span *ngIf="formPDAService.value.pdaServiceItem[i].groupStatus === true &&
+                                                    formPDAService.value.pdaServiceItem[i].status === 'SUBM'"><b>Submitted</b></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--            <pre>-->
+            <!--                {{formPDAService.value | json}}-->
+            <!--            </pre>-->
+        </div>
+        <div class="col-md-10">
+            <button (click)="addNew()" color="primary" mat-raised-button type="button">Add New</button>&nbsp;&nbsp;
+            <button (click)="deleteAll()" [disabled]="arrDelete.length === 0" class="remove" color="warn"
+                    mat-raised-button type="button">Delete All
+            </button>
+        </div>
+    </div>
+</form>

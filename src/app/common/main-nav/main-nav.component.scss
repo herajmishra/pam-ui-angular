@@ -1,0 +1,133 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar a {
+  display: inline-block;
+  margin: 0px 10px;
+  color: white;
+  text-decoration: none;
+}
+
+.hidden-xs {
+  width: 85%;
+  margin-left: 15px;
+  margin-top: 9px;
+  //height: 45px;
+}
+
+.mainMenuItem {
+  margin-left: 15px;
+  height: 45px;
+  width: 85%;
+  padding-top: 4px;
+  position: relative;
+  padding-right: 64px;
+}
+
+//.subMenuItem {
+//  position: relative;
+//  margin-left: 4px;
+//  margin-bottom: 5px;
+//  width: 100%;
+//  padding-left: 0;
+//}
+
+.mat-nav-list .mat-list-item {
+  cursor: pointer;
+  outline: 0;
+  height: 16px;
+  margin-top: 14px;
+  width: 21vh;
+}
+
+.subMenuItem.active {
+  background-color: #01507b;
+  color: white;
+  border-radius: 5px;
+  margin-bottom: -4px;
+  width: 160px;
+  margin-left: -19px;
+  height: 37px !important;
+  //padding : 3px;
+  //padding-top : 0px;
+  margin-bottom: -4px !important;
+  margin-top: 7px !important;
+}
+
+.mat-expansion-panel-header {
+  //padding-top: 15px;
+  margin-top: -3px;
+  margin-left: 3px;
+}
+
+//mat-expansion-panel {
+//  height: 27px !important;
+//}
+
+//mat-expansion-panel.active {
+//  background-color: #015b8d;
+//}
+
+.mainMenuItem.active {
+  background-color: #015b8d;
+  color: white;
+  font-size: 16px;
+}
+
+.linkname {
+  margin-left: 19px;
+  margin-top: 1px;
+}
+
+mat-sidenav-content {
+  padding: 10px !important;
+}
+
+mat-toolbar {
+  background-color: transparent;
+}
+
+.mat-menu-content {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+div.mat-menu-panel.submenu {
+  margin-left: 20px !important;
+}
+
+.sub-mat-expansion-panel {
+  width: 127%;
+  margin-left: -17px;
+}
+
+img {
+  height: 6vh;
+  margin-left: -2vh;
+}
+
+.orgName {
+  color: white !important;
+  font-size: 15px;
+  margin-left: 3px;
+  font-weight: bold;
+}
